@@ -114,14 +114,10 @@ static Fieldlist getfieldlist(S_table varenv,A_fieldList list)
     }
     return head;
 }
-static int checkEqSymbol(S_symbol a, S_symbol b)
-{
-		return !(strcmp(a->name, b->name));
-}
 static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_var var)
 {
     if(!var)
-        return Newexpty(Tr_NoopExp(), VOID_type());
+        return Newexpty(Tr_NoExp(), VOID_type());
     Environments env;
     struct expty pt1,pt2;
     Fieldlist tmpfl;
@@ -130,14 +126,16 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     if(var->kind==A_simpleVar)
     {
         env= (Environments)S_look(funenv,var->u.simple);
-        trans=Tr_NoopExp();
+        trans=Tr_NoExp();
         //µ±Ç°ÊÇ¼ì²éº¯ÊýµÄÊ±ºò,º¯ÊýÃû¶ÔÓ¦ÄÚÈÝÒ²Òª·µ»Ø
         if(env && (env->flag==VAR||env->flag == CONST))
         {	
             trans=Tr_SimpleVar(env->u.var.acc,l);			
+            struct expty temExp = Newexpty(trans,gettype(env->u.var.ty));
             if(env->flag == CONST)		
-            		trans->isConst = true;	
-            return Newexpty(trans,gettype(env->u.var.ty));
+            		temExp.isConst = 1;	
+            else temExp.isConst = 0;
+            return temExp;
         }
         //½öÓÃÓÚº¯Êý·µ»ØÖµÀàÐÍ¼ì²é
         else if(env&&env->flag == FUN&&nowCheckFun&&checkEqSymbol(nowCheckFun->name, var->u.simple))
@@ -154,7 +152,7 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     {
     		//½«x.yÖÐµÄx°ü×°Ò»ÏÂ£¬x±»¶¨ÒåÎªsimpleVar£¬¿ÉÒÔ´Ó·ûºÅ±íÖÐ²éÕÒ³öfieldlist¡£
         pt1=transVar(l,e,funenv,varenv,var->u.field.var);
-        trans=Tr_NoopExp();
+        trans=Tr_NoExp();
         if(pt1.ty->flag!=RECORD)
         {
             EM_error(var->pos,"Expected a record type\n");
@@ -166,6 +164,7 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             for(tmpfl=pt1.ty->u.record;tmpfl;tmpfl=tmpfl->next,i++)
                 if(tmpfl->head->name==var->u.field.sym)
                 {
+//有点小问题，等会再查
                     trans=Tr_FieldVar(pt1.exp,i);
                     return Newexpty(trans,gettype(tmpfl->head->ty));
                 }
@@ -176,7 +175,7 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     else if(var->kind==A_subscriptVar)
     {
         pt1=transVar(l,e,funenv,varenv,var->u.subscript.var);
-        trans=Tr_NoopExp();
+        trans=Tr_NoExp();
         if(pt1.ty->flag!=ARRAY)
         {
             EM_error(var->pos,"Expected an array type\n");
@@ -189,7 +188,7 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             if(pt2.ty->flag==INT||pt2.ty->flag == CHAR)
             {
                 trans=Tr_SubscriptVar(pt1.exp,pt2.exp);
-                return Newexpty(trans,gettype(pt1.ty->u.array));
+                return Newexpty(trans,gettype(pt1.ty->u.arrayInfo->ty));
             }
             else if(pt2.ty->flag == ENUM)
             {
@@ -210,11 +209,12 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
 static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_exp exp)
 {
     if(!exp)
-        return Newexpty(Tr_NoopExp(), VOID_type());
+        return Newexpty(Tr_NoExp(), VOID_type());
     if(exp->kind==A_varExp)
         return transVar(l,e,funenv,varenv,exp->u.var);
-    else if(exp->kind==A_nilExp)
-        return Newexpty(nilExp(),NIL_type());
+//有问题，最后在处理
+//    else if(exp->kind==A_nilExp)
+//        return Newexpty(nilExp(),NIL_type());
     else if(exp->kind==A_stringExp)
         return Newexpty(Tr_StringExp(255 ,exp->u.stringg),STRING_type());
     else if(exp->kind==A_intExp)
@@ -230,13 +230,13 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     		Tr_expList fields = NULL;
     		Type recordTy;
     		recordTy = gettype(S_look(varenv, exp->u.record.typ));
-    		if(!rectp)
+    		if(!recordTy)
             EM_error(exp->pos,"Type %s undefined\n",S_name(exp->u.record.typ));
         else{
-        		if(rectp->flag!=RECORD)
+        		if(recordTy->flag!=RECORD)
             {
                 EM_error(exp->pos,"Record type expected, get %s\n",S_name(exp->u.record.typ));
-                return Newexpty(Tr_NoopExp(),RECORD_type(NULL));
+                return Newexpty(Tr_NoExp(),RECORD_type(NULL));
             }
             Fieldlist fieldTyList = recordTy->u.record;
 		    		for(itemList; itemList; itemList = itemList->tail, fieldTyList = fieldTyList->next, n++){
@@ -253,7 +253,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
 		    		}
 		    		return Newexpty(Tr_RecordExp(n, fields), recordTy);
     		}
-        return Newexpty(Tr_NoopExp(),RECORD_type(NULL));
+        return Newexpty(Tr_NoExp(),RECORD_type(NULL));
     }
 //Êý×é»¹Ã»ÓÐ¶¨ÒåºÃ£¬µÈ¶¨ÒåºÃÁË£¬ÔÙÐ´
 //µÈÐÞ¸ÄºÃabsynºóÔÙ´¦Àí
@@ -262,7 +262,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     else if(exp->kind==A_breakExp)
     {
         if(!e)
-            return Newexpty(Tr_NoopExp(),VOID_type());
+            return Newexpty(Tr_NoExp(),VOID_type());
         return Newexpty(Tr_BreakExp(e),VOID_type());
     }
     else if(exp->kind==A_callExp)
@@ -272,7 +272,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         Tr_expList paramlist=NULL;
         Typelist fmls;
         callinfo=S_look(funenv,exp->u.call.func);
-        Tr_exp trans=Tr_NoopExp();
+        Tr_exp trans=Tr_NoExp();
         if(callinfo && callinfo->flag==FUN)
         {
             fmls=callinfo->u.fun.param;
@@ -282,7 +282,8 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
                 struct expty arg=transExp(l,e,funenv,varenv,params->head);
                 if(!type_match(arg.ty,fmls->head))
                     EM_error(params->head->pos,"Function %s type mismatch\n",S_name(exp->u.call.func));
-                Tr_explistnewhead(arg.exp,&paramlist);
+//                Tr_explistnewhead(arg.exp,&paramlist);
+                paramlist = Tr_ExpList(arg.exp, paramlist);
             }
             
             if(!params&&fmls)
@@ -312,7 +313,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             if(rectp->flag!=RECORD)
             {
                 EM_error(exp->pos,"Record type expected, get %s\n",S_name(exp->u.record.typ));
-                return Newexpty(Tr_NoopExp(),RECORD_type(NULL));
+                return Newexpty(Tr_NoExp(),RECORD_type(NULL));
             }
             Fieldlist fieldTys = rectp->u.record;
 						A_efieldList recList;
@@ -332,7 +333,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
 						}
 						return Newexpty(recordExp(n, list), rectp);
         }
-        return Newexpty(Tr_NoopExp(),RECORD_type(NULL));
+        return Newexpty(Tr_NoExp(),RECORD_type(NULL));
     }
     */
     //ÐèÒªÐÞ¸Ä£¬µÈabsynÐÞ¸ÄºÃÖ®ºó£¬ÔÙ´¦Àí
@@ -350,12 +351,12 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         if(!finaltp)
         {
             EM_error(exp->pos,"Array type %s undefined\n",S_name(exp->u.array.typ));
-            return Newexpty(Tr_NoopExp(),INT_type());
+            return Newexpty(Tr_NoExp(),INT_type());
         }
         else if(finaltp->flag!=ARRAY)
         {
             EM_error(exp->pos,"Array type expected, get %s\n",S_name(exp->u.array.typ));
-            return Newexpty(Tr_NoopExp(),INT_type());
+            return Newexpty(Tr_NoExp(),INT_type());
         }
 
         struct expty size,init;
@@ -363,11 +364,11 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         init=transExp(l,e,funenv,varenv,exp->u.array.init);
         if(size.ty->flag!=INT && size.ty->flag!=CHAR)
             EM_error(exp->pos,"Array %s size must be an interger or char.\n",exp->u.array.typ);
-        else if(!type_match(init.ty, finaltp->u.array))
+        else if(!type_match(init.ty, finaltp))
             EM_error(exp->pos,"Array %s type mismatch\n",exp->u.array.typ);
         else
             return Newexpty(Tr_ArrayExp(size.exp,init.exp),artp);
-        return Newexpty(Tr_NoopExp(),INT_type());
+        return Newexpty(Tr_NoExp(),INT_type());
     }
     else if(exp->kind==A_seqExp)
     {
@@ -376,7 +377,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         struct expty seq;
         explist=exp->u.seq;
         if(!explist)
-            return Newexpty(Tr_NoopExp(),VOID_type());
+            return Newexpty(Tr_NoExp(),VOID_type());
         while(explist->head)
         {
             seq=transExp(l,e,funenv,varenv,explist->head);
@@ -395,11 +396,11 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         if(cond.ty->flag!=INT&&cond.ty->flag!=BOOLEAN)
         {
             EM_error(exp->pos,"Integer expected in while\n");
-        		return Newexpty(Tr_NoopExp(),INT_type());
+        		return Newexpty(Tr_NoExp(),INT_type());
         }
-        Tr_exp done=doneExp();
+//        Tr_exp done=doneExp();
         struct expty body=transExp(l,e,funenv,varenv,exp->u.whilee.body);
-        return Newexpty(Tr_WhileExp(cond.exp, body.exp, done),VOID_type());
+        return Newexpty(Tr_WhileExp(cond.exp, body.exp),VOID_type());
     }
     else if(exp->kind==A_assignExp)
     {
@@ -411,13 +412,13 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         		if(left.exp == NULL){//ÓÃÓÚº¯Êý·µ»ØÖµÀàÐÍ¼ì²é
    							EM_error(nowCheckFun->pos, "incorrect return type in function '%s'", S_name(nowCheckFun->name));
    					}
-   					else if(left.exp.isConst)
+   					else if(left.isConst)
    					{
    							EM_error(exp->pos, "Don't assign to the const\n");
    					}
    					else
             		EM_error(exp->pos,"Assign type mismatch\n");
-        		return Newexpty(Tr_NoopExp(),INT_type());
+        		return Newexpty(Tr_NoExp(),INT_type());
         }
         return Newexpty(Tr_AssignExp(left.exp, right.exp),VOID_type());
     }
@@ -437,7 +438,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         stm=transExp(l,e,funenv,varenv,exp->u.forr.body);
         S_endScope(funenv);
 		*/
-        return Newexpty(Tr_NoopExp(),VOID_type());
+        return Newexpty(Tr_NoExp(),VOID_type());
     }
     else if(exp->kind==A_letExp)
     {
@@ -480,7 +481,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         //µÈÓÚ²»µÈÓÚ£¬Ð¡ÓÚ£¬Ð¡ÓÚµÈÓÚ£¬´óÓÚ£¬´óÓÚµÈÓÚ
         else if(oper>=A_eqOp&&oper<=A_geOp)
         {
-            Tr_exp trans=Tr_NoopExp();
+            Tr_exp trans=Tr_NoExp();
             if(oper==A_eqOp||oper==A_neqOp)
             {
                 if(left.ty->flag==INT||left.ty->flag==REAL)
@@ -595,18 +596,18 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     else if(exp->kind == A_gotoExp)
     {
     	  if(!e)
-            return Newexpty(Tr_NoopExp(),VOID_type());
+            return Newexpty(Tr_NoExp(),VOID_type());
         return Newexpty(Tr_GotoExp(e),VOID_type());
     }
     else if(exp->kind == A_repeatExp)
     {
     		struct expty num;
     		num = transExp(l, e, funenv, varenv, exp->u.repeatt.test);
-    		if(cond.ty->flag!=INT)
+    		if(num.ty->flag!=INT)
             EM_error(exp->pos,"Integer expected in repeat\n");
-        Tr_exp done=doneExp();
+//        Tr_exp done=doneExp();
         struct expty body = transExp(l, e, funenv, varenv, exp->u.repeatt.body);
-        return Newexpty(Tr_RepeatExp(num.exp, body.exp, done), VOID_type());
+        return Newexpty(Tr_RepeatExp(num.exp, body.exp), VOID_type());
     }
     /*
     caseÓï¾äÃ»ÓÐ·µ»ØÖµ
@@ -615,7 +616,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     {
     		A_expList items = exp->u.casee.valList;
     		struct expty test = transExp(l, e, funenv, varenv, exp->u.casee.exp);
-    		if(test.ty->flag!=INT && test.ty->flag!=CHAR
+    		if(test.ty->flag!=INT && test.ty->flag!=CHAR&&
     			test.ty->flag!=STRING&&test.ty->flag!=BOOLEAN)
     				EM_error(exp->pos,"Integer, char, string or boolean expected in case\n");
     		Tr_expList caseList = NULL;
@@ -630,6 +631,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             struct expty actionItem = transExp(l, e, funenv, varenv, action);
             Tr_explistnewhead(actionItem,&caseList);
     		}
+//有问题，查查在处理
     		return Newexpty(test, caseList);
     }
     else
@@ -654,10 +656,10 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
             {
             		if(!dec->u.var.init)
             		{
-            				S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp));
+            				S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));
             		}
                 else if(type_match(tmptp,tmp.ty))
-                    S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp));               
+                    S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));               
                 else
                 {
                     EM_error(dec->pos,"Type %s mismatch\n",S_name(dec->u.var.typ));
@@ -695,7 +697,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
     		}
     		else
     		{
-    				S_enter(funenv, dec->u.constt.constt, Newconstenv(acc, getExp.ty));
+    				S_enter(funenv, dec->u.constt.constt, Newvarenv(acc, getExp.ty, 1));
     		}
     		return Tr_AssignExp(Tr_SimpleVar(acc, l), getExp.exp);
     }
@@ -735,16 +737,16 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 						Environments funEntry = (Environments)S_look(funenv, f->name); /*get fun-info*/
 						S_beginScope(funenv);							//ÊµÏÖÄÚ²ãº¯Êý·ÃÎÊÍâ²ã±äÁ¿
 						formalTys = funEntry->u.fun.param;
-						Tr_accesslist acls = funEntry->u.fun.lev->params;
-						for (list = f->params, s = formalTys; list && s && acls; list = list->tail, s = s->next, acls = acls->next)
-							S_enter(funenv, list->head->name, Newvarenv(acls->head, s->head));
+						Tr_accessList acls = Tr_formals(funEntry->u.fun.lev);
+						for (list = f->params, s = formalTys; list && s && acls; list = list->tail, s = s->next, acls = acls->tail)
+							S_enter(funenv, list->head->name, Newvarenv(acls->head, s->head, 0));
 						nowCheckFun = f;
 						transExp(funEntry->u.fun.lev, e, funenv, varenv, f->body);
 						nowCheckFun = NULL;
 						Tr_procEntryExit(funEntry->u.fun.lev, final.exp, acls);
 						S_endScope(funenv);
 				}
-				return Tr_NoopExp();
+				return Tr_NoExp();
     }
     else if(dec->kind==A_typeDec)
     {
@@ -764,7 +766,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 					namety->u.name.ty = resTy;
 				}
 				if (iscyl) EM_error(dec->pos,"illegal type cycle: cycle must contain record, array");
-				return Tr_NoopExp();
+				return Tr_NoExp();
 		    }
 		    else
 		    {
@@ -795,11 +797,11 @@ static Type transType(S_table varenv,A_ty ty)
     }
     else if(ty->kind==A_arrayTy)
     {
-        tmptp=S_look(varenv,ty->u.array);
+        tmptp=S_look(varenv,ty->u.arrayy.element);
         if(tmptp)
             return ARRAY_type(tmptp);
         else
-            EM_error(ty->pos,"Type %s undefined\n",S_name(ty->u.array));
+            EM_error(ty->pos,"Type %s undefined\n",S_name(ty->u.arrayy.element));
     }
 
     else

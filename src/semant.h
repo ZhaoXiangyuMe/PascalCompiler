@@ -5,7 +5,7 @@
 
 struct expty
 {
-	bool isConst = FALSE;
+	int isConst;
 	Tr_exp exp;
 	Type ty;
 };
