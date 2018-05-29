@@ -4,5 +4,6 @@ Program ex11;
 	        1:  dm:=a;      
 	        2:  dm:=b;
 	        3:  dm:=c;
+            @1_falfa := a;
 	    end;
     End.

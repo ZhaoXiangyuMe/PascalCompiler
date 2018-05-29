@@ -5,6 +5,10 @@
 #include "symbol.h"
 #include "absyn.h"
 #include "y.tab.h"
+
+// update EM_tokPos
+void updatePos(void);
+int charPos;
 %}
 div             [dD][iI][vV]                         
 mod             [mM][oO][dD]
@@ -62,76 +66,86 @@ realt           [rR][eE][aA][lL]
 sys_type        boolt|cht|intt|realt
 %%
 
-"("                 { return LP;}
-")"                 { return RP;}
-"["                 { return LB;}
-"]"                 { return RB;}
-"."                 { return DOT;}
-".."                { return DOTDOT;}
-","                 { return COMMA; }               
-":"                 return COLON;               //应该是：SEMI应该是；
-";"                 return SEMI;                //name == id
-"+"                 return PLUS;
-"-"                 return MINUS;
-"*"                 return MUL;
-"/"                 return REALDIV;
-{div}               { return INTDIV;}
-{mod}               return MOD;
-">="                return GE;
-">"                 return GT;
-"<="                return LE;
-"<"                 return LT;
-"="                 { return EQUAL;}
-"<>"                { return UNEQUAL;}
-":="                return ASSIGN;
-{program}             { return PROGRAM;}
-{const}               { return CONST;}
-{type}                { return TYPE;}
-{var}                 return VAR;
-{array}               { return ARRAY;}
-{of}                  return OF;
-{record}              return RECORD;
-{end}                 return END;
-{function}            return FUNCTION;
-{procedure}           return PROCEDURE;
-{begin}               { return BEGIN_T;}
-{read}                return READ;
-{if}                  return IF;
-{then}                return THEN;
-{else}                return ELSE;
-{repeat}              {return REPEAT;}
-{until}               {return UNTIL;}
-{while}               return WHILE;
-{do}                  return DO;
-{for}                 return FOR;
-{to}                  return TO;
-{downto}              return DOWNTO;
-{case}                return CASE;
-{goto}                return GOTO;
-{and}                 return AND;
-{or}                  return OR;
-{not}                 return NOT;
-[a-zA-Z][0-9a-zA-Z]*  { /*printf("id %s\n", yytext);*/ yylval.sval = yytext; return ID;}
+"("                 {updatePos(); return LP;}
+")"                 {updatePos(); return RP;}
+"["                 {updatePos(); return LB;}
+"]"                 {updatePos(); return RB;}
+"."                 {updatePos(); return DOT;}
+".."                {updatePos(); return DOTDOT;}
+","                 {updatePos(); return COMMA; }               
+":"                 {updatePos(); return COLON;}              //应该是：SEMI应该是；
+";"                 {updatePos(); return SEMI;}                //name == id
+"+"                 {updatePos(); return PLUS;}
+"-"                 {updatePos(); return MINUS;}
+"*"                 {updatePos(); return MUL;}
+"/"                 {updatePos(); return REALDIV;}
+{div}               {updatePos(); return INTDIV;}
+{mod}               {updatePos(); return MOD; }
+">="                {updatePos(); return GE;}
+">"                 {updatePos(); return GT;}
+"<="                {updatePos(); return LE;}
+"<"                 {updatePos(); return LT;}
+"="                 {updatePos(); return EQUAL;}
+"<>"                {updatePos(); return UNEQUAL;}
+":="                {updatePos(); return ASSIGN;}
+{program}             {updatePos(); return PROGRAM;}
+{const}               {updatePos(); return CONST;}
+{type}                {updatePos(); return TYPE;}
+{var}                 {updatePos(); return VAR;}
+{array}               {updatePos(); return ARRAY;}
+{of}                  {updatePos(); return OF;}
+{record}              {updatePos(); return RECORD;}
+{end}                 {updatePos(); return END;}
+{function}            {updatePos(); return FUNCTION;}
+{procedure}           {updatePos(); return PROCEDURE;}
+{begin}               {updatePos(); return BEGIN_T;}
+{read}                {updatePos(); return READ;}
+{if}                  {updatePos(); return IF;}
+{then}                {updatePos(); return THEN;}
+{else}                {updatePos(); return ELSE;}
+{repeat}              {updatePos(); return REPEAT;}
+{until}               {updatePos(); return UNTIL;}
+{while}               {updatePos(); return WHILE;}
+{do}                  {updatePos(); return DO;}
+{for}                 {updatePos(); return FOR;}
+{to}                  {updatePos(); return TO;}
+{downto}              {updatePos(); return DOWNTO;}
+{case}                {updatePos(); return CASE;}
+{goto}                {updatePos(); return GOTO;}
+{and}                 {updatePos(); return AND;}
+{or}                  {updatePos(); return OR;}
+{not}                 {updatePos(); return NOT;}
+[a-zA-Z][0-9a-zA-Z]*  {updatePos(); yylval.sval = yytext; return ID;}
 {integer}         {
+    updatePos();
     int getNum;
     sscanf(yytext, "%d", &getNum);
     yylval.ival = getNum;  
     return INTEGER;
 }
 {real}             {
+    updatePos();
     double getNum;
     sscanf(yytext, "%lf", &getNum);
     yylval.rval = getNum;
     return REAL;
 }
-{char}                { yylval.cval = yytext[0]; return CHAR; }
-{string}              { /*printf("This is string \n");*/ yylval.sval = yytext; return STRING; }
-{sys_con}             return SYS_CON;
-{sys_funct}           return SYS_FUNCT;
-{sys_proc}            return SYS_PROC;
-{sys_type}            return SYS_TYPE;
-.                     {}      
+{char}                {updatePos(); yylval.cval = yytext[0]; return CHAR; }
+{string}              {updatePos(); yylval.sval = yytext; return STRING; }
+{sys_con}             {updatePos(); return SYS_CON;}
+{sys_funct}           {updatePos(); return SYS_FUNCT;}
+{sys_proc}            {updatePos(); return SYS_PROC;}
+{sys_type}            {updatePos(); return SYS_TYPE;}
+\n                    {updatePos(); EM_newline();}
+\r\n                  {updatePos(); EM_newline();}
+[ \t+]                {updatePos();}
+.                     {updatePos(); char message[100]; sprintf(message, "illegal token:%s", yytext);EM_error(EM_tokPos, message);}      
 %%
+void updatePos(void) {
+    EM_tokPos = charPos;
+    charPos += yyleng;
+}
 int yywrap(){
+    charPos = 1;
     return 1;
 }

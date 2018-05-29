@@ -83,12 +83,12 @@ extern int yydebug;
     THEN = 293,
     ELSE = 294,
     REPEAT = 295,
-    UNTIL = 296,
-    WHILE = 297,
-    DO = 298,
-    FOR = 299,
-    TO = 300,
-    DOWNTO = 301,
+    TO = 296,
+    DOWNTO = 297,
+    UNTIL = 298,
+    WHILE = 299,
+    DO = 300,
+    FOR = 301,
     CASE = 302,
     GOTO = 303,
     READ = 304,
@@ -144,12 +144,12 @@ extern int yydebug;
 #define THEN 293
 #define ELSE 294
 #define REPEAT 295
-#define UNTIL 296
-#define WHILE 297
-#define DO 298
-#define FOR 299
-#define TO 300
-#define DOWNTO 301
+#define TO 296
+#define DOWNTO 297
+#define UNTIL 298
+#define WHILE 299
+#define DO 300
+#define FOR 301
 #define CASE 302
 #define GOTO 303
 #define READ 304

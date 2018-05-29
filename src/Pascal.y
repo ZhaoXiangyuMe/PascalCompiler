@@ -31,8 +31,8 @@ A_decList A_unDecList(A_fieldList fieldList);
         ASSIGN PROGRAM FUNCTION PROCEDURE BEGIN_T END  
         TYPE ARRAY OF RECORD VAR 
         IF THEN ELSE
-        REPEAT UNTIL WHILE DO FOR
-        TO DOWNTO CASE GOTO 
+        REPEAT TO DOWNTO UNTIL WHILE DO FOR
+        CASE GOTO 
         READ
         CONST DOTDOT
 %union {
@@ -56,11 +56,12 @@ A_decList A_unDecList(A_fieldList fieldList);
     A_namety namety;
     A_nametyList nametylist;
 }
-%token<ival> INTEGER
+%token<ival> INTEGER 
 %token<rval> REAL
-%token<cval> CHAR
+%token<cval> CHAR 
 %token<sval> ID STRING SYS_CON SYS_FUNCT SYS_PROC SYS_TYPE
 
+%type <cval> direction
 %type <exp> program routine sub_routine routine_body const_value stmt compound_stmt non_label_stmt assign_stmt proc_stmt if_stmt else_clause repeat_stmt while_stmt for_stmt case_stmt case_expr goto_stmt expression expr term factor 
 %type <declist> routine_head label_part const_part const_expr_list type_part var_part var_decl_list var_decl 
 %type <fundec> function_decl function_head procedure_decl procedure_head
@@ -187,9 +188,18 @@ else_clause : ELSE stmt {/*with else clause*/ $$ = $2;}
 repeat_stmt : REPEAT  stmt  UNTIL  expression {/*repeat statement*/ 
           $$ = A_RepeatExp(EM_tokPos, $2, $4);} 
 while_stmt : WHILE  expression  DO stmt {/*while statement*/ $$ = A_WhileExp(EM_tokPos, $2, $4);}
-for_stmt : FOR  id  ASSIGN  expression  direction  expression  DO stmt {/*for statement*/ $$ = A_ForExp(EM_tokPos, $2, $4, $6, $8);}
-direction   : TO 
-            | DOWNTO
+for_stmt : FOR  id  ASSIGN  expression  direction  expression  DO stmt {/*for statement*/
+    A_var var =  A_SimpleVar(EM_tokPos, $2);
+    if (!($5)) {
+        // to 
+        $$ = A_SeqExp(EM_tokPos, A_ExpList(A_AssignExp(EM_tokPos, var, $4), A_ExpList(A_WhileExp(EM_tokPos, A_OpExp(EM_tokPos, A_ltOp, A_VarExp(EM_tokPos, var), $6), $8), NULL )));
+    } else {
+        // downto 
+        $$ = A_SeqExp(EM_tokPos, A_ExpList(A_AssignExp(EM_tokPos, var, $4), A_ExpList(A_WhileExp(EM_tokPos, A_OpExp(EM_tokPos, A_gtOp, A_VarExp(EM_tokPos ,var), $6), $8), NULL )));
+    }  
+}
+direction   : TO {$$ = 0;}
+            | DOWNTO {$$ = 1;}
 case_stmt : CASE expression OF case_expr_list  END {/*case statement, case_expr_list is all the possible value*/ $$ = A_CaseExp(EM_tokPos, $2, $4);}
 case_expr_list : case_expr case_expr_list   {$$ = A_ExpList($1, $2);}  
                 |  case_expr {$$ = A_ExpList($1, NULL);}

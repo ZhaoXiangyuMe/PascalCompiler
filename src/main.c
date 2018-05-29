@@ -1,14 +1,16 @@
 // tree root from paring 
 #include "absyn.h"
 #include "prabsyn.h"
+#include "errormsg.h"
 #include <stdio.h>
 
 extern A_exp A_synTreeRoot;
 extern int yyparse(void);
 
 int parse(string fname) {
-    // freopen to read pascal code file 
-    freopen(fname, "r", stdin);
+    // reset filename and line number 
+    // open given file in the same time 
+    EM_reset(fname);
     int res = yyparse();
     if (!res) {
     } else {

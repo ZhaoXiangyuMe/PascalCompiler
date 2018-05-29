@@ -6,6 +6,7 @@
 #include "util.h"
 #include "symbol.h" /* symbol table data structures */
 #include "absyn.h"  /* abstract syntax data structures */
+#include <stdio.h>
 
 A_var A_SimpleVar(A_pos pos, S_symbol sym) {
     A_var p = checked_malloc(sizeof(*p));
@@ -381,3 +382,6 @@ A_efieldList A_EfieldList(A_efield head, A_efieldList tail) {
     return p;
 }
 
+A_exp linkIf(A_exp if1, A_exp if2) {
+    return A_SeqExp(-1, A_ExpList(if1, A_ExpList(if2, NULL)));
+}

@@ -40,7 +40,7 @@ Type ARRAY_type(Array arrayInfo)
 {
 	Type tmp=checked_malloc(sizeof(*tmp));
 	tmp->flag=ARRAY;
-	tmp->u.array=arrayInfo;
+	tmp->u.arrayInfo=arrayInfo;
 	return tmp;
 }
 

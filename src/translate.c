@@ -342,7 +342,7 @@ Tr_exp Tr_StringExp(int size, string str) {
 	}
 
 	// return array after initialization 
-	return Tr_ArrayExp(size, init);
+	return Tr_ArrayExp(1, size, init);
 }
 
 Tr_exp Tr_CallExp(Temp_label label, Tr_level call, Tr_level dec, Tr_expList args) {
@@ -391,9 +391,11 @@ Tr_exp Tr_RecordExp(int* sizes, Tr_expList fields) {
 	return Tr_Ex(T_Eseq(T_Seq(alloc, seq), T_Temp(addrTemp)));
 }
 
-Tr_exp Tr_ArrayExp(int size, Tr_expList initList) {
+Tr_exp Tr_ArrayExp(int size, int totalLen, Tr_expList initList) {
 	// init contents of array 
 	Temp_temp addrTemp = Temp_newtemp();
+	T_stm alloc = T_Move(T_Temp(addrTemp), T_Call(T_Name(Temp_namedlabel("malloc")), 
+												T_ExpList(T_Const(totalLen*size), NULL)));
 
 	T_stm seq = T_Seq(T_Move(T_Mem(T_Binop(T_plus, T_Temp(addrTemp), T_Const(0)), size), unEx(initList->head)), NULL);
 
@@ -404,9 +406,6 @@ Tr_exp Tr_ArrayExp(int size, Tr_expList initList) {
 		tail->u.SEQ.right = T_Seq(T_Move(T_Mem(T_Binop(T_plus, T_Temp(addrTemp), T_Const(i*size)), size), unEx(initList->head)), NULL);
 		tail = tail->u.SEQ.right;
 	}
-
-	T_stm alloc = T_Move(T_Temp(addrTemp), T_Call(T_Name(Temp_namedlabel("malloc")), 
-												T_ExpList(T_Const(i*size), NULL)));
 
 	return Tr_Ex(T_Eseq(T_Seq(alloc, seq), T_Temp(addrTemp)));
 }
@@ -547,7 +546,7 @@ Tr_exp Tr_StringRelExp(A_oper op, Tr_exp left, Tr_exp right) {
 
 Tr_exp Tr_GotoExp(Tr_exp pos) {
 	Temp_label name = unEx(pos)->u.NAME;
-	return Tr_Nx(TJump(T_Name(name), Temp_LabelList(name, NULL)));
+	return Tr_Nx(T_Jump(T_Name(name), Temp_LabelList(name, NULL)));
 }
 
 Tr_exp Tr_BreakExp(Tr_exp pos) {
@@ -569,3 +568,4 @@ void Tr_procEntryExit(Tr_level level, Tr_exp body, Tr_accessList formals) {
 
 F_fragList Tr_getResult() {
 	return procFragList;
+}

@@ -48,7 +48,7 @@ Tr_exp Tr_StringExp(int size, string str);
 // sizes: size of each field in record 
 Tr_exp Tr_RecordExp(int* sizes, Tr_expList fields);
 // size: size of element in array
-Tr_exp Tr_ArrayExp(int size, Tr_expList initList);
+Tr_exp Tr_ArrayExp(int size, int totalLen, Tr_expList initList);
 
 Tr_exp Tr_CallExp(Temp_label label, Tr_level call, Tr_level def, Tr_expList args);
 Tr_exp Tr_OpExp(A_oper op, Tr_exp left, Tr_exp right);
