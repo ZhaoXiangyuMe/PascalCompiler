@@ -6,6 +6,7 @@
 #include "symbol.h"
 #include "absyn.h"
 
+int yyerror(char* msg);
 int yylex(void);
 // root for parsed abstract syntax tree
 A_exp A_synTreeRoot;
@@ -72,7 +73,7 @@ A_decList A_unDecList(A_fieldList fieldList);
 %type <sym> id sys_con sys_funct sys_proc sys_type
 %type <ty> type_decl simple_type_decl array_type_decl record_type_decl
 %type <fieldlist> field_decl_list field_decl name_list parameters para_type_list para_decl_list var_para_list val_para_list
-
+%type <cval> stat;
 
 %start program
 
@@ -163,6 +164,7 @@ routine_body : compound_stmt {/*set routine body as A_exp*/ $$ = $1;}
 compound_stmt : BEGIN_T  stmt_list  END { $$ = A_SeqExp(EM_tokPos, $2);}
 stmt_list : stmt  SEMI stmt_list { /*statement in routine body*/$$ = A_ExpList($1, $3);}
             | {$$ = NULL;}
+            | stat {$$ = NULL;}
 stmt : INTEGER  COLON  non_label_stmt  {$$ = $3;}
         |  non_label_stmt { $$ = $1;}
 non_label_stmt  : assign_stmt { $$ = $1;}
@@ -216,6 +218,7 @@ expression  :  expression  GE  expr  {/*greater equal expression*/ $$ = A_OpExp(
             |  expression  EQUAL  expr  {/*equal expression*/ $$ = A_OpExp(EM_tokPos, A_eqOp, $1, $3);}
             |  expression  UNEQUAL  expr  {/*unequal expression*/ $$ = A_OpExp(EM_tokPos, A_neqOp, $1, $3);}
             |  expr{ $$ = $1;}
+
 expr    :  expr  PLUS  term {$$ = A_OpExp(EM_tokPos, A_plusOp, $1, $3);} 
         |  expr  MINUS  term  {$$ = A_OpExp(EM_tokPos, A_minusOp, $1, $3);} 
         |  expr  OR  term  {/*bool operation or*/ $$ = A_IfExp(EM_tokPos, $1, A_IntExp(EM_tokPos, 1), $3);} 
@@ -245,10 +248,12 @@ sys_funct: SYS_FUNCT {$$ = S_Symbol($1);}
 sys_proc: SYS_PROC {$$ = S_Symbol($1);}
 sys_type: SYS_TYPE {$$ = S_Symbol($1);} 
 
+stat: error SEMI {/*jump to next semi after error */}
+
 %%
 int yyerror(char* msg) {
-    fprintf(stderr, "error:%s\n", msg);
-    return 1;
+    EM_error(EM_tokPos, "%s", msg);
+    return 0;   
 }
 
 // link two fieldlists 
