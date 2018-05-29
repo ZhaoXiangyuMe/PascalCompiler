@@ -313,6 +313,10 @@ Tr_exp Tr_NpExp() {
 	return Tr_Ex(T_Const(0));
 }
 
+Tr_exp Tr_BoolExp(bool b) {
+	return Tr_Ex(T_Char(b));
+}
+
 Tr_exp Tr_IntExp(int i) {
 	return Tr_Ex(T_Const(i));
 }

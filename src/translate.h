@@ -39,7 +39,8 @@ Tr_exp Tr_FieldVar(Tr_exp addr, int offset, int size);
 // size: size of element in array 
 Tr_exp Tr_SubscriptVar(Tr_exp addr, Tr_exp offset, int size);
 
-Tr_exp Tr_NoopExp();
+Tr_exp Tr_NoExp();
+Tr_exp Tr_BoolExp(bool b);
 Tr_exp Tr_IntExp(int i);
 Tr_exp Tr_RealExp(double r);
 Tr_exp Tr_CharExp(char c);
