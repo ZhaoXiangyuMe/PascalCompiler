@@ -210,7 +210,7 @@ static void pr_dec(FILE *out, A_dec v, int d) {
 		case A_varDec:
 			fprintf(out, "varDec(%s,\n", S_name(v->u.var.var));
 			if (v->u.var.typ) {
-				indent(out, d+1); fprintf(out, "%s,\n", S_name(v->u.var.typ)); 
+				indent(out, d+1); fprintf(out, "%s,\n", S_name(v->u.var.typ->u.name)); 
 			}
 			pr_exp(out, v->u.var.init, d+1); fprintf(out, ",\n");
 			indent(out, d+1); fprintf(out, "%s", v->u.var.escape ? "TRUE)" : "FALSE)");
@@ -245,7 +245,7 @@ static void pr_ty(FILE *out, A_ty v, int d) {
 static void pr_field(FILE *out, A_field v, int d) {
 	indent(out, d);
 	fprintf(out, "field(%s,\n", S_name(v->name));
-	indent(out, d+1); fprintf(out, "%s,\n", S_name(v->typ));
+	indent(out, d+1); fprintf(out, "%s,\n", S_name(v->typ->u.name));
 	indent(out, d+1); fprintf(out, "%s", v->escape ? "TRUE)" : "FALSE)");
 }
 

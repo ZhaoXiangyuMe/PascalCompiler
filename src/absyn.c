@@ -245,7 +245,7 @@ A_dec A_ConstDec(A_pos pos, S_symbol constt, A_exp init) {
     return p;
 }
 
-A_dec A_VarDec(A_pos pos, S_symbol var, S_symbol typ, A_exp init) {
+A_dec A_VarDec(A_pos pos, S_symbol var, A_ty typ, A_exp init) {
     A_dec p = checked_malloc(sizeof(*p));
     p->kind=A_varDec;
     p->pos=pos;
@@ -306,7 +306,7 @@ A_ty A_EnumType(A_pos pos, A_fieldList valueList) {
     return p;
 }
 
-A_field A_Field(A_pos pos, S_symbol name, S_symbol typ) {
+A_field A_Field(A_pos pos, S_symbol name, A_ty typ) {
     A_field p = checked_malloc(sizeof(*p));
     p->pos=pos;
     p->name=name;

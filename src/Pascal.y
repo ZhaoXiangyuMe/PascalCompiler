@@ -271,7 +271,7 @@ A_fieldList A_linkFieldList(A_fieldList front, A_fieldList tail) {
 A_fieldList A_setFieldListType(A_fieldList fieldList, A_ty ty) {
     A_fieldList front = fieldList;
     for (;fieldList;fieldList = fieldList->tail) {
-        fieldList->head->typ = ty->u.name;
+        fieldList->head->typ = ty;
     }
 
     return front;
@@ -290,7 +290,7 @@ A_decList A_linkDecList(A_decList front, A_decList tail) {
 A_decList A_setDecListType(A_decList decList, A_ty ty) {
     A_decList front = decList;
     for (;decList;decList = decList->tail) {
-        decList->head->u.var.typ = ty->u.name;
+        decList->head->u.var.typ = ty;
     }
 
     return front;

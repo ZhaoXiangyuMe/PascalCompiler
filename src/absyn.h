@@ -80,7 +80,7 @@ struct A_dec_
      A_pos pos;
      union {A_fundecList function;
       /* escape may change after the initial declaration */
-      struct {S_symbol var; S_symbol typ; A_exp init; bool escape;} var;
+      struct {S_symbol var; A_ty typ; A_exp init; bool escape;} var;
       struct {S_symbol constt; A_exp init; bool escape;} constt;
       A_nametyList type;
     } u;
@@ -98,7 +98,7 @@ struct A_ty_ {enum {A_nameTy, A_recordTy, A_arrayTy, A_rangeTy, A_enumType} kind
 
 /* Linked lists and nodes of lists */
 
-struct A_field_ {S_symbol name, typ; A_pos pos; bool escape;};
+struct A_field_ {S_symbol name; A_ty typ; A_pos pos; bool escape;};
 struct A_fieldList_ {A_field head; A_fieldList tail;};
 struct A_expList_ {A_exp head; A_expList tail;};
 struct A_fundec_ {A_pos pos;
@@ -144,7 +144,7 @@ A_exp A_LetExp(A_pos pos, A_decList decs, A_exp body);
 A_expList A_ExpList(A_exp head, A_expList tail);
 
 A_dec A_ConstDec(A_pos pos, S_symbol constt, A_exp init);
-A_dec A_VarDec(A_pos pos, S_symbol var, S_symbol typ, A_exp init);
+A_dec A_VarDec(A_pos pos, S_symbol var, A_ty typ, A_exp init);
 A_dec A_TypeDec(A_pos pos, A_nametyList type);
 A_dec A_FunctionDec(A_pos pos, A_fundecList function);
 A_decList A_DecList(A_dec head, A_decList tail);
@@ -155,7 +155,7 @@ A_ty A_ArrayTy(A_pos pos, A_ty range, S_symbol element);
 A_ty A_RangeTy(A_pos pos, A_exp lo, A_exp hi);
 A_ty A_EnumType(A_pos pos, A_fieldList valueList);
 
-A_field A_Field(A_pos pos, S_symbol name, S_symbol typ);
+A_field A_Field(A_pos pos, S_symbol name, A_ty typ);
 A_fieldList A_FieldList(A_field head, A_fieldList tail);
 
 A_fundec A_Fundec(A_pos pos, S_symbol name, A_fieldList params, S_symbol result,
