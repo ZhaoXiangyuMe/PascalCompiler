@@ -280,7 +280,7 @@ A_ty A_RecordTy(A_pos pos, A_fieldList record) {
     return p;
 }
 
-A_ty A_ArrayTy(A_pos pos, A_ty range, A_ty element) {
+A_ty A_ArrayTy(A_pos pos, A_ty range, S_symbol element) {
     A_ty p = checked_malloc(sizeof(*p));
     p->kind=A_arrayTy;
     p->pos=pos;
