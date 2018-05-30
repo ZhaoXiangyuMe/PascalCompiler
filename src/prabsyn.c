@@ -235,7 +235,7 @@ static void pr_ty(FILE *out, A_ty v, int d) {
 			pr_fieldList(out, v->u.record, d+1); fprintf(out, ")");
 			break;
 		case A_arrayTy:
-			fprintf(out, "arrayTy(%s)", S_name(v->u.arrayy.element));
+			fprintf(out, "arrayTy(%s)", S_name(v->u.arrayy.element->u.name));
 			break;
 		default:
 			assert(0); 

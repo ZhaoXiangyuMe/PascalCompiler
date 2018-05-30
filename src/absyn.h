@@ -90,7 +90,7 @@ struct A_ty_ {enum {A_nameTy, A_recordTy, A_arrayTy, A_rangeTy, A_enumType} kind
         A_pos pos;
         union {S_symbol name;
          A_fieldList record;
-         struct {struct A_ty_* range; S_symbol element;} arrayy;
+         struct {struct A_ty_* range; A_ty element;} arrayy;
          struct {A_exp lo, hi;} rangee;
          A_fieldList enumm;
        } u;
@@ -151,7 +151,7 @@ A_decList A_DecList(A_dec head, A_decList tail);
 
 A_ty A_NameTy(A_pos pos, S_symbol name);
 A_ty A_RecordTy(A_pos pos, A_fieldList record);
-A_ty A_ArrayTy(A_pos pos, A_ty range, S_symbol element);
+A_ty A_ArrayTy(A_pos pos, A_ty range, A_ty element);
 A_ty A_RangeTy(A_pos pos, A_exp lo, A_exp hi);
 A_ty A_EnumType(A_pos pos, A_fieldList valueList);
 

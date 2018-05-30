@@ -1778,7 +1778,7 @@ yyreduce:
 
   case 31:
 #line 127 "Pascal.y" /* yacc.c:1646  */
-    {/*array type, simple_type_dec is range of array, type_dec is actual type of array element*/ (yyval.ty) = A_ArrayTy(EM_tokPos, (yyvsp[-3].ty), (yyvsp[0].ty)->u.name);}
+    {/*array type, simple_type_dec is range of array, type_dec is actual type of array element*/ (yyval.ty) = A_ArrayTy(EM_tokPos, (yyvsp[-3].ty), (yyvsp[0].ty));}
 #line 1783 "y.tab.c" /* yacc.c:1646  */
     break;
 

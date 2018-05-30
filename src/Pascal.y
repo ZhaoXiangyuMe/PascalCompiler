@@ -124,7 +124,7 @@ simple_type_decl    :  sys_type {/*system defined type*/ $$ = A_NameTy(EM_tokPos
                     |  MINUS  const_value  DOTDOT  const_value {/*subrange type*/ A_RangeTy(EM_tokPos, A_OpExp(EM_tokPos, A_minusOp, A_IntExp(EM_tokPos, 0), $2), $4);}
                     |  MINUS  const_value  DOTDOT  MINUS  const_value {/*subrange type*/ A_RangeTy(EM_tokPos, A_OpExp(EM_tokPos, A_minusOp, A_IntExp(EM_tokPos, 0), $2), A_OpExp(EM_tokPos, A_minusOp, A_IntExp(EM_tokPos, 0), $5));}                    
                     |  id  DOTDOT  id {/*subrange type*/ A_RangeTy(EM_tokPos, A_VarExp(EM_tokPos, A_SimpleVar(EM_tokPos, $1)), A_VarExp(EM_tokPos, A_SimpleVar(EM_tokPos, $3)));}
-array_type_decl : ARRAY  LB  simple_type_decl  RB  OF  type_decl {/*array type, simple_type_dec is range of array, type_dec is actual type of array element*/ $$ = A_ArrayTy(EM_tokPos, $3, $6->u.name);}
+array_type_decl : ARRAY  LB  simple_type_decl  RB  OF  type_decl {/*array type, simple_type_dec is range of array, type_dec is actual type of array element*/ $$ = A_ArrayTy(EM_tokPos, $3, $6);}
 record_type_decl    : RECORD  field_decl_list  END {/*record type*/ $$ = A_RecordTy(EM_tokPos, $2);}
 
 field_decl_list : field_decl  field_decl_list   {/*link parts of fieldlists*/ $$ = A_linkFieldList($1, $2); }
