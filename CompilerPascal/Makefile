@@ -1,10 +1,16 @@
-objects = main.o semant.o env.o types.o translate.o tree.o prabsyn.o temp.o frame.o symbol.o table.o absyn.o util.o errormsg.o y.tab.o lex.yy.o 
+objects = main.o canon.o printtree.o semant.o env.o types.o escape.o translate.o tree.o prabsyn.o temp.o frame.o symbol.o table.o absyn.o util.o errormsg.o y.tab.o lex.yy.o 
 pascalc: $(objects)
 	cc -o pascalc -g $(objects)
 
 
 main.o: 
 	cc -g -c main.c
+
+canon.o: canon.c canon.h
+	cc -g -c canon.c
+
+printtree.o: printtree.c printtree.h
+	cc -g -c printtree.c
 
 semant.o: semant.c semant.h
 	cc -g -c semant.c
@@ -14,6 +20,9 @@ env.o: env.c env.h
 
 types.o: types.c types.h
 	cc -g -c types.c
+
+escape.o: escape.c escape.h
+	cc -g -c escape.c
 
 translate.o: translate.c  translate.h
 	cc -g -c translate.c 

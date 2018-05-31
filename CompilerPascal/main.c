@@ -3,6 +3,8 @@
 #include "prabsyn.h"
 #include "errormsg.h"
 #include "semant.h"
+#include "printtree.h"
+#include "canon.h"
 #include <stdio.h>
 
 extern A_exp A_synTreeRoot;
@@ -34,5 +36,12 @@ int main(int argc, char* argv[]) {
     fprintf(out, "\n---IR Tree---\n");
     F_fragList fragList = transProg(A_synTreeRoot);
 
+    for (;fragList;fragList = fragList->tail) {
+        T_stmList stmList = C_linearize(fragList->head->u.proc.body);
+        printStmList(stdout, stmList);
 
+        stmList = C_traceSchedule(C_basicBlocks(stmList));
+        printStmList(stdout, stmList); 
+
+    }
 }

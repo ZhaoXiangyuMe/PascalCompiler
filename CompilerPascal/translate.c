@@ -7,10 +7,10 @@ static Tr_level outermost = NULL;
 static F_fragList procFragList = NULL;
 
 struct Tr_level_ {
-	// parent of current level 
 	Tr_level parent;
 	// name of current level 
 	Temp_label name;
+	// frame of current level 
 	F_frame frame;
 };
  
@@ -147,7 +147,7 @@ Tr_access Tr_allocLocal(Tr_level level, bool escape) {
 	return access;
 }
 
-// function have to do with pathclist 
+// do patch for pathclist 
 void doPatch(patchList	tList, Temp_label label) {
 	for (;tList;tList = tList->tail) {
 		*(tList->head) = label;
