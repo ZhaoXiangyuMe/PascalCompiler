@@ -130,14 +130,14 @@ static int getSize(Type ty)
 			case ARRAY: {
 				int num;
 				Type arrayTy = gettype(ty->u.arrayInfo->ty);
-				if(arrayTy->kind == INT)
+				if(arrayTy->flag == INT)
 					num = ty->u.arrayInfo->u.intt.end-ty->u.arrayInfo->u.intt.start+1;
-				else if(arrayTy->kind == CHAR)
+				else if(arrayTy->flag == CHAR)
 					num = ty->u.arrayInfo->u.charr.end-ty->u.arrayInfo->u.charr.start+1;
 				return num*getSize(ty->u.arrayInfo->tyEle);
 			}
 			case RECORD:{
-				Fieldlist re = ty->record;
+				Fieldlist re = ty->u.record;
 				Field nowF;
 				int num = 0;
 				for(re; re!=NULL; re = re->next)
@@ -293,8 +293,8 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     		}
         return Newexpty(Tr_NoExp(),RECORD_type(NULL));
     }
-    else if(exp->kind==A_booleanExp)
-        return Newexpty(Tr_BooleanExp(exp->u.booll),BOOLEAN_type());
+    else if(exp->kind==A_boolExp)
+        return Newexpty(Tr_BoolExp(exp->u.booll),BOOLEAN_type());
     else if(exp->kind==A_breakExp)
     {
         if(!e)
@@ -318,7 +318,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
                 struct expty arg=transExp(l,e,funenv,varenv,params->head);
                 if(!type_match(arg.ty,fmls->head))
                     EM_error(params->head->pos,"Function %s type mismatch\n",S_name(exp->u.call.func));
-                Tr_explistnewhead(arg.exp,&paramlist);
+                paramlist = Tr_ExpList(arg.exp,paramlist);
             }
             
             if(!params&&fmls)
@@ -430,7 +430,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         {
             seq=transExp(l,e,funenv,varenv,explist->head);
 						printf("\n");
-            Tr_explistnewhead(seq.exp,&lis);
+            lis = Tr_ExpList(seq.exp,lis);
 						if (explist->tail == NULL)
 								break;
 		        explist=explist->tail;
@@ -496,7 +496,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         S_beginScope(funenv);
         S_beginScope(varenv);
         for(declist=exp->u.let.decs;declist;declist=declist->tail)
-            Tr_explistnewhead(transDec(l,e,funenv,varenv,declist->head),&list);
+            list = Tr_ExpList(transDec(l,e,funenv,varenv,declist->head),list);
         body=transExp(l,e,funenv,varenv,exp->u.let.body);
         list = Tr_ExpList(body.exp, list);
         // Tr_explistnewhead(body.exp,&list);
@@ -662,25 +662,22 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     */
     else if(exp->kind == A_caseExp)
     {
+    		
     		A_expList items = exp->u.casee.valList;
     		struct expty test = transExp(l, e, funenv, varenv, exp->u.casee.exp);
     		if(test.ty->flag!=INT && test.ty->flag!=CHAR&&
     			test.ty->flag!=STRING&&test.ty->flag!=BOOLEAN)
     				EM_error(exp->pos,"Integer, char, string or boolean expected in case\n");
-    		Tr_expList caseList = NULL;
+    		Tr_exp elsee = NULL;
     		for(items; items; items = items->tail)
     		{
     				A_exp val = items->head->u.caseval.val;
     				A_exp action = items->head->u.caseval.action;
     				struct expty valItem = transExp(l, e, funenv, varenv, val);
-    				Tr_explistnewhead(valItem,&caseList);
-    				if(!type_match(test.ty,valItem.ty))
-                EM_error(exp->pos,"Case items' value type must correspond\n");
-            struct expty actionItem = transExp(l, e, funenv, varenv, action);
-            Tr_explistnewhead(actionItem,&caseList);
+    				struct expty actionItem = transExp(l, e, funenv, varenv, action);
+    				elsee = Tr_IfExp(Tr_RelExp(A_eqOp, test.exp, valItem.exp), actionItem.exp, elsee);
     		}
-//有问题，查查在处理
-    		return Newexpty(test, caseList);
+    		return Newexpty(elsee, VOID_type());
     }
     else
     {
@@ -699,7 +696,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
         acc=Tr_allocLocal(l,dec->u.var.escape);
         if(dec->u.var.typ)
         {
-		        tmptp=transType(varenv, dec->u.var.typ);
+		        tmptp=transType(l, e, funenv, varenv, dec->u.var.typ);
 		        if(tmptp)
 		        {
 		        		if(!dec->u.var.init)
@@ -747,7 +744,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
     			&&	dec->u.var.init->kind!=A_charExp
     			&&	dec->u.var.init->kind!=A_realExp
     			&&	dec->u.var.init->kind!=A_stringExp
-    			&&	dec->u.var.init->kind!=A_booleanExp)
+    			&&	dec->u.var.init->kind!=A_boolExp)
     		{
     				EM_error(dec->pos,"Const initialization error\n");
     		}
@@ -816,7 +813,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 					S_enter(varenv, nl->head->name, NAME_type(nl->head->name, nl->head->ty));
 				iscyl = TRUE;
 				for (nl = dec->u.type; nl; nl = nl->tail) {//ËùÓÐµÄ¶¼ÏòÉÏ²éÕÒÒ»¸ö£¬×îºóÒ»¸ö»á²éÕÒµ½Êµ¼ÊÀàÐÍ
-					resTy = transType(varenv, nl->head->ty);
+					resTy = transType(l, e, funenv, varenv, nl->head->ty);
 					if (iscyl)
 						if (resTy->flag != NAME)
 							iscyl = FALSE;
@@ -832,7 +829,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 		    exit(4);
 		}
 }
-static Type transType(S_table varenv,A_ty ty)
+static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
 {
     Type tmptp=NULL;
     Fieldlist list=NULL;
@@ -855,18 +852,17 @@ static Type transType(S_table varenv,A_ty ty)
     }
     else if(ty->kind==A_arrayTy)
     {
-        tmptp=transType(varenv, ty->u.arrayy.element);//S_look(varenv,ty->u.arrayy.element);
+        tmptp=transType(l, e, funenv, varenv, ty->u.arrayy.element);//S_look(varenv,ty->u.arrayy.element);
         if(!tmptp)
         	EM_error(ty->pos,"Type %s undefined\n",S_name(ty->u.arrayy.element));
         struct array temArrayInfo;
         temArrayInfo.tyEle = tmptp;
-        
+        struct expty low, high;
         low = transExp(l, e, funenv, varenv, ty->u.rangee.lo);
         high = transExp(l,e,funenv, varenv, ty->u.rangee.hi);
         if(!(low.ty->flag == INT || low.ty->flag == CHAR)
         	||!(high.ty->flag == INT || high.ty->flag == CHAR))
-        	EM_error(ty->pos,"Array index type should be integer, char 
-        												or const char, const integer.\n");
+        	EM_error(ty->pos,"Array index type should be integer, char or const char, const integer.\n");
         else 
         if(low.ty->flag!=high.ty->flag)
         	EM_error(ty->pos,"Array index type is inconsistent.\n");
@@ -879,8 +875,8 @@ static Type transType(S_table varenv,A_ty ty)
 		      temArrayInfo.u.charr.end = ty->u.rangee.hi->u.charr;
         }
         else if(ty->u.rangee.lo->kind == A_varExp){
-        	Environments getLoEnv = S_look(funenv, ty->u.rangee.lo->u.simple);
-        	Environments getHiEnv = S_look(funenv, ty->u.rangee.hi->u.simple);
+        	Environments getLoEnv = S_look(funenv, ty->u.rangee.lo->u.var->u.simple);
+        	Environments getHiEnv = S_look(funenv, ty->u.rangee.hi->u.var->u.simple);
         	if(getLoEnv&&getHiEnv)
         	{
         			if(getLoEnv->flag == CONST&&getHiEnv->flag == CONST)

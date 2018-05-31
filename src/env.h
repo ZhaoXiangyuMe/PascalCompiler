@@ -14,7 +14,7 @@ struct environments
 		struct { Tr_level lev; Temp_label label; Typelist param; Type output; } fun;
 	} u;
 };
-A_exp initVar = NULL;
+static A_exp initVar = NULL;
 Environments Newvarenv(Tr_access acc,Type ty,int isConst);
 Environments Newfunenv(Tr_level l,Temp_label label,Typelist param,Type output);
 

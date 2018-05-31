@@ -9,7 +9,7 @@
 #include "translate.h"
 #include "env.h"
 
-Environments Newvarenv(Traccess acc,Type ty, int isConst)
+Environments Newvarenv(Tr_access acc,Type ty,int isConst)
 {
 	Environments tmp=checked_malloc(sizeof(*tmp));
 	if(isConst)
@@ -21,7 +21,7 @@ Environments Newvarenv(Traccess acc,Type ty, int isConst)
 	tmp->u.var.acc=acc;
 	return tmp;
 }
-Environments Newfunenv(Level l,Temp_label label,Typelist param,Type output)
+Environments Newfunenv(Tr_level l,Temp_label label,Typelist param,Type output)
 {
 	Environments tmp=checked_malloc(sizeof(*tmp));
 	tmp->flag=FUN;
@@ -49,36 +49,36 @@ S_table Base_funenv(void)									//暂时不变，等以后再说！！！
 	S_table base=S_empty();
 	S_enter(base,
     S_Symbol("print"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),VOID_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),VOID_type())
 	);  //void print(string)
 	S_enter(base,S_Symbol("getchar"),
-	Newfunenv(global(),Temp_newlabel(),NULL,VOID_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),NULL,VOID_type())
 	);  //void getchcar(void)
 	S_enter(base,S_Symbol("chr"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(INT_type(),NULL),STRING_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(INT_type(),NULL),STRING_type())
 	); //string chr(int)
 	S_enter(base,S_Symbol("size"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),INT_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),INT_type())
 	); //int size(string)
 	S_enter(base,S_Symbol("not"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(INT_type(),NULL),INT_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(INT_type(),NULL),INT_type())
 	); //int not(int)
 	S_enter(base,S_Symbol("exit"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(INT_type(),NULL),VOID_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(INT_type(),NULL),VOID_type())
 	); //void exit(int)
 	S_enter(base,S_Symbol("substring"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(STRING_type(),
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),
 	Newtypelist(INT_type(),Newtypelist(INT_type(),NULL))),STRING_type())
 	); //string substing(string,int start,int end)
 	S_enter(base,S_Symbol("ord"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),INT_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),INT_type())
 	); //int ord(string)
 	S_enter(base,S_Symbol("concat"),
-	Newfunenv(global(),Temp_newlabel(),Newtypelist(STRING_type(),
+	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),
 	Newtypelist(STRING_type(),NULL)),STRING_type())
 	); //string concat(string1,string2)
 	S_enter(base,S_Symbol("flush"),
-	Newfunenv(global(),Temp_newlabel(),NULL,VOID_type())
+	Newfunenv(Tr_outermost(),Temp_newlabel(),NULL,VOID_type())
 	); //void flush(void)
 	return base;
 }

@@ -17,6 +17,9 @@ S_symbol S_Symbol(string);
 /* Extract the underlying string from a symbol */
 string S_name(S_symbol);
 
+/*比较两个S_symbol是否相等*/
+int checkEqSymbol(S_symbol a, S_symbol b);
+
 /* S_table is a mapping from S_symbol->any, where "any" is represented
  *     here by void*  */
 typedef struct TAB_table_ * S_table;

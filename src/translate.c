@@ -13,16 +13,6 @@ struct Tr_level_ {
 	Temp_label name;
 	F_frame frame;
 };
-
-struct Tr_access_ {
-	Tr_level level;
-	F_access access;
-};
-
-struct Tr_accessList_ {
-	Tr_access head;
-	Tr_accessList tail;
-};
  
 struct patchList_ {
 	Temp_label* head;
@@ -309,7 +299,7 @@ Tr_exp Tr_SubscriptVar(Tr_exp addr, Tr_exp index, int size) {
 
 
 // expressions 
-Tr_exp Tr_NpExp() {
+Tr_exp Tr_NoExp() {
 	return Tr_Ex(T_Const(0));
 }
 
