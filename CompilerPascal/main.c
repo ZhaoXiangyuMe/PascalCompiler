@@ -22,6 +22,9 @@ int parse(string fname) {
 }
 
 int main(int argc, char* argv[]) {
-    parse(argv[1]);
+	if (argc < 2)
+		parse("test/2.pas");
+	else 
+	    parse(argv[1]);
     pr_exp(stdout, A_synTreeRoot, 0);
 }

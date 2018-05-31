@@ -10,7 +10,7 @@ struct environments
 	enum { VAR, FUN, CONST } flag;
 	union
 	{
-		struct { Tr_access acc; Type ty; A_exp init} var;	
+		struct { Tr_access acc; Type ty; A_exp init; } var;
 		struct { Tr_level lev; Temp_label label; Typelist param; Type output; } fun;
 	} u;
 };

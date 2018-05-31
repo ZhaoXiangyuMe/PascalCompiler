@@ -6,6 +6,7 @@
 #include "absyn.h"
 #include "y.tab.h"
 
+#define YY_NO_UNISTD_H
 // update EM_tokPos
 void updatePos(void);
 int charPos;

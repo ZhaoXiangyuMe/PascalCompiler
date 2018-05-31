@@ -602,11 +602,12 @@ char *yytext;
 #include "absyn.h"
 #include "y.tab.h"
 
+#define YY_NO_UNISTD_H
 // update EM_tokPos
 void updatePos(void);
 int charPos;
-#line 608 "lex.yy.c"
 #line 609 "lex.yy.c"
+#line 610 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -823,10 +824,10 @@ YY_DECL
 		}
 
 	{
-#line 67 "Pascal.l"
+#line 68 "Pascal.l"
 
 
-#line 829 "lex.yy.c"
+#line 830 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -885,257 +886,257 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 69 "Pascal.l"
+#line 70 "Pascal.l"
 {updatePos(); return LP;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 70 "Pascal.l"
+#line 71 "Pascal.l"
 {updatePos(); return RP;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 71 "Pascal.l"
+#line 72 "Pascal.l"
 {updatePos(); return LB;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 72 "Pascal.l"
+#line 73 "Pascal.l"
 {updatePos(); return RB;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 73 "Pascal.l"
+#line 74 "Pascal.l"
 {updatePos(); return DOT;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 74 "Pascal.l"
+#line 75 "Pascal.l"
 {updatePos(); return DOTDOT;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 75 "Pascal.l"
+#line 76 "Pascal.l"
 {updatePos(); return COMMA; }               
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 76 "Pascal.l"
+#line 77 "Pascal.l"
 {updatePos(); return COLON;}              //应该是：SEMI应该是；
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 77 "Pascal.l"
+#line 78 "Pascal.l"
 {updatePos(); return SEMI;}                //name == id
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 78 "Pascal.l"
+#line 79 "Pascal.l"
 {updatePos(); return PLUS;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 79 "Pascal.l"
+#line 80 "Pascal.l"
 {updatePos(); return MINUS;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 80 "Pascal.l"
+#line 81 "Pascal.l"
 {updatePos(); return MUL;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 81 "Pascal.l"
+#line 82 "Pascal.l"
 {updatePos(); return REALDIV;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 82 "Pascal.l"
+#line 83 "Pascal.l"
 {updatePos(); return INTDIV;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 83 "Pascal.l"
+#line 84 "Pascal.l"
 {updatePos(); return MOD; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 84 "Pascal.l"
+#line 85 "Pascal.l"
 {updatePos(); return GE;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 85 "Pascal.l"
+#line 86 "Pascal.l"
 {updatePos(); return GT;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 86 "Pascal.l"
+#line 87 "Pascal.l"
 {updatePos(); return LE;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 87 "Pascal.l"
+#line 88 "Pascal.l"
 {updatePos(); return LT;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 88 "Pascal.l"
+#line 89 "Pascal.l"
 {updatePos(); return EQUAL;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 89 "Pascal.l"
+#line 90 "Pascal.l"
 {updatePos(); return UNEQUAL;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 90 "Pascal.l"
+#line 91 "Pascal.l"
 {updatePos(); return ASSIGN;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 91 "Pascal.l"
+#line 92 "Pascal.l"
 {updatePos(); return PROGRAM;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 92 "Pascal.l"
+#line 93 "Pascal.l"
 {updatePos(); return CONST;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 93 "Pascal.l"
+#line 94 "Pascal.l"
 {updatePos(); return TYPE;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 94 "Pascal.l"
+#line 95 "Pascal.l"
 {updatePos(); return VAR;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 95 "Pascal.l"
+#line 96 "Pascal.l"
 {updatePos(); return ARRAY;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 96 "Pascal.l"
+#line 97 "Pascal.l"
 {updatePos(); return OF;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 97 "Pascal.l"
+#line 98 "Pascal.l"
 {updatePos(); return RECORD;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 98 "Pascal.l"
+#line 99 "Pascal.l"
 {updatePos(); return END;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 99 "Pascal.l"
+#line 100 "Pascal.l"
 {updatePos(); return FUNCTION;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 100 "Pascal.l"
+#line 101 "Pascal.l"
 {updatePos(); return PROCEDURE;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 101 "Pascal.l"
+#line 102 "Pascal.l"
 {updatePos(); return BEGIN_T;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 102 "Pascal.l"
+#line 103 "Pascal.l"
 {updatePos(); return READ;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 103 "Pascal.l"
+#line 104 "Pascal.l"
 {updatePos(); return IF;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 104 "Pascal.l"
+#line 105 "Pascal.l"
 {updatePos(); return THEN;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 105 "Pascal.l"
+#line 106 "Pascal.l"
 {updatePos(); return ELSE;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 106 "Pascal.l"
+#line 107 "Pascal.l"
 {updatePos(); return REPEAT;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 107 "Pascal.l"
+#line 108 "Pascal.l"
 {updatePos(); return UNTIL;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 108 "Pascal.l"
+#line 109 "Pascal.l"
 {updatePos(); return WHILE;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 109 "Pascal.l"
+#line 110 "Pascal.l"
 {updatePos(); return DO;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 110 "Pascal.l"
+#line 111 "Pascal.l"
 {updatePos(); return FOR;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 111 "Pascal.l"
+#line 112 "Pascal.l"
 {updatePos(); return TO;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 112 "Pascal.l"
+#line 113 "Pascal.l"
 {updatePos(); return DOWNTO;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 113 "Pascal.l"
+#line 114 "Pascal.l"
 {updatePos(); return CASE;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 114 "Pascal.l"
+#line 115 "Pascal.l"
 {updatePos(); return GOTO;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 115 "Pascal.l"
+#line 116 "Pascal.l"
 {updatePos(); return AND;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 116 "Pascal.l"
+#line 117 "Pascal.l"
 {updatePos(); return OR;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 117 "Pascal.l"
+#line 118 "Pascal.l"
 {updatePos(); return NOT;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 118 "Pascal.l"
+#line 119 "Pascal.l"
 {updatePos(); yylval.sval = yytext; return ID;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 119 "Pascal.l"
+#line 120 "Pascal.l"
 {
     updatePos();
     int getNum;
@@ -1146,7 +1147,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 126 "Pascal.l"
+#line 127 "Pascal.l"
 {
     updatePos();
     double getNum;
@@ -1157,62 +1158,62 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 133 "Pascal.l"
+#line 134 "Pascal.l"
 {updatePos(); yylval.cval = yytext[0]; return CHAR; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 134 "Pascal.l"
+#line 135 "Pascal.l"
 {updatePos(); yylval.sval = yytext; return STRING; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 135 "Pascal.l"
+#line 136 "Pascal.l"
 {updatePos(); return SYS_CON;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 136 "Pascal.l"
+#line 137 "Pascal.l"
 {updatePos(); return SYS_FUNCT;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 137 "Pascal.l"
+#line 138 "Pascal.l"
 {updatePos(); return SYS_PROC;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 138 "Pascal.l"
+#line 139 "Pascal.l"
 {updatePos(); return SYS_TYPE;}
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 139 "Pascal.l"
+#line 140 "Pascal.l"
 {updatePos(); EM_newline();}
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 140 "Pascal.l"
+#line 141 "Pascal.l"
 {updatePos(); EM_newline();}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 141 "Pascal.l"
+#line 142 "Pascal.l"
 {updatePos();}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 142 "Pascal.l"
+#line 143 "Pascal.l"
 {updatePos(); char message[100]; sprintf(message, "illegal token:%s", yytext);EM_error(EM_tokPos, message);}      
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 143 "Pascal.l"
+#line 144 "Pascal.l"
 ECHO;
 	YY_BREAK
-#line 1215 "lex.yy.c"
+#line 1216 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2217,7 +2218,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 143 "Pascal.l"
+#line 144 "Pascal.l"
 
 void updatePos(void) {
     EM_tokPos = charPos;
