@@ -2,6 +2,7 @@
 #include "absyn.h"
 #include "prabsyn.h"
 #include "errormsg.h"
+#include "semant.h"
 #include <stdio.h>
 
 extern A_exp A_synTreeRoot;
@@ -22,9 +23,16 @@ int parse(string fname) {
 }
 
 int main(int argc, char* argv[]) {
+    FILE* out = stdout;
 	if (argc < 2)
 		parse("test/2.pas");
 	else 
 	    parse(argv[1]);
-    pr_exp(stdout, A_synTreeRoot, 0);
+    fprintf(out, "\n---Abstract Syntax Tree---\n");
+    pr_exp(out, A_synTreeRoot, 0);
+
+    fprintf(out, "\n---IR Tree---\n");
+    F_fragList fragList = transProg(A_synTreeRoot);
+
+
 }

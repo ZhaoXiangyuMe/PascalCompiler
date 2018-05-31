@@ -1,11 +1,8 @@
-Program ex11;   
+Program ex11;    
+    var a, b, c:real;
+        x, y:integer;  
     Begin
-	    case nn  of        
-	        1:  dm:=a;   
-	        2:  dm:=b;
-	        3:  dm:=c;
-	    end;
-        a := 1
-        b := 2
+        a := 1;
+        b := 2;
         c := 4;
     End.

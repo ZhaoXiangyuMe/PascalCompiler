@@ -692,7 +692,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
         struct expty tmp;
         Type tmptp;
         Tr_access acc; 
-        //tmp=transExp(l,e,funenv,varenv,dec->u.var.init);
+        // tmp=transExp(l,e,funenv,varenv,dec->u.var.init);
         acc=Tr_allocLocal(l,dec->u.var.escape);
         if(dec->u.var.typ)
         {

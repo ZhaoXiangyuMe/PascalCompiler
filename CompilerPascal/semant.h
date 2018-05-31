@@ -1,6 +1,7 @@
 #ifndef SEMANT_H
 #define SEMANT_H
 #include "translate.h"
+#include "types.h"
 //typedef void *Tr_exp;
 
 struct expty
