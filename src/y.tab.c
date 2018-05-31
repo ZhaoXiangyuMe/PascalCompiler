@@ -1778,7 +1778,7 @@ yyreduce:
 
   case 31:
 #line 127 "Pascal.y" /* yacc.c:1646  */
-    {/*array type, simple_type_dec is range of array, type_dec is actual type of array element*/ (yyval.ty) = A_ArrayTy(EM_tokPos, (yyvsp[-3].ty), (yyvsp[0].ty)->u.name);}
+    {/*array type, simple_type_dec is range of array, type_dec is actual type of array element*/ (yyval.ty) = A_ArrayTy(EM_tokPos, (yyvsp[-3].ty), (yyvsp[0].ty));}
 #line 1783 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2655,7 +2655,7 @@ A_fieldList A_linkFieldList(A_fieldList front, A_fieldList tail) {
 A_fieldList A_setFieldListType(A_fieldList fieldList, A_ty ty) {
     A_fieldList front = fieldList;
     for (;fieldList;fieldList = fieldList->tail) {
-        fieldList->head->typ = ty->u.name;
+        fieldList->head->typ = ty;
     }
 
     return front;
@@ -2674,7 +2674,7 @@ A_decList A_linkDecList(A_decList front, A_decList tail) {
 A_decList A_setDecListType(A_decList decList, A_ty ty) {
     A_decList front = decList;
     for (;decList;decList = decList->tail) {
-        decList->head->u.var.typ = ty->u.name;
+        decList->head->u.var.typ = ty;
     }
 
     return front;

@@ -2,6 +2,7 @@
 #include "util.h"
 #include "symbol.h"
 #include "types.h"
+#include "absyn.h"
 
 static struct type st_NIL ={NIL};
 static struct type st_INT ={INT};
@@ -40,7 +41,11 @@ Type ARRAY_type(Array arrayInfo)
 {
 	Type tmp=checked_malloc(sizeof(*tmp));
 	tmp->flag=ARRAY;
-	tmp->u.arrayInfo=arrayInfo;
+	Array array = checked_malloc(sizeof(*array));
+	array->ty = arrayInfo->ty;
+	array->u = arrayInfo->u;
+	array->tyEle = arrayInfo->tyEle;
+	tmp->u.arrayInfo=array;
 	return tmp;
 }
 

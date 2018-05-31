@@ -19,6 +19,16 @@ Tr_accessList Tr_AccessList(Tr_access head, Tr_accessList tail);
 
 Tr_expList Tr_ExpList(Tr_exp head, Tr_expList tail);
 
+struct Tr_access_ {
+	Tr_level level;
+	F_access access;
+};
+
+struct Tr_accessList_ {
+	Tr_access head;
+	Tr_accessList tail;
+};
+
 
 // level dependent 
 

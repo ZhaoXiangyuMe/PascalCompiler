@@ -26,10 +26,25 @@ struct type
 };
 
 struct array{
-	Type ty;							//枚举类型下标的类型
-	S_symbol enumName;		//一维数组下标为枚举类型，枚举类型的名称
-	S_symbol start;
-	S_symbol end;					//数组下标的起始和终结位置，即使为数字等，统一转化为S_symbol
+	Type ty;							//下标的类型
+	Type tyEle;						//数组中每个元素的类型
+		union{
+			struct{
+				int start;
+				int end;	
+			}intt;
+			struct{
+				char start;
+				char end;
+			}charr;
+			struct{
+				S_symbol start;
+				S_symbol end;
+				S_symbol enumName;
+			}enumm;
+		}u;
+//	A_ty		 type;				//存储数组的下标
+//	A_exp arrayExp;				//存储数组语法解析之后的内容，方便递归
 };
 
 struct typelist {Type head; Typelist next;};

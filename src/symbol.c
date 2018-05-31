@@ -16,6 +16,11 @@ static S_symbol mksymbol(string name, S_symbol next)
  return s; 
 }
 
+int checkEqSymbol(S_symbol a, S_symbol b)
+{
+		return !(strcmp(a->name, b->name));
+}
+
 #define SIZE 109  /* should be prime */
 
 static S_symbol hashtable[SIZE];

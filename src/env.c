@@ -9,13 +9,14 @@
 #include "translate.h"
 #include "env.h"
 
-Environments Newvarenv(Tr_access acc,Type ty, int isConst)
+Environments Newvarenv(Tr_access acc,Type ty,int isConst)
 {
 	Environments tmp=checked_malloc(sizeof(*tmp));
 	if(isConst)
 		tmp->flag = CONST;
 	else
 		tmp->flag=VAR;
+	tmp->u.var.init = initVar;
 	tmp->u.var.ty=ty;
 	tmp->u.var.acc=acc;
 	return tmp;

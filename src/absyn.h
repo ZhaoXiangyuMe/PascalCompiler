@@ -45,9 +45,11 @@ struct A_var_
       };
 
 struct A_exp_
-      {enum {A_varExp, A_nilExp, A_intExp, A_realExp, A_charExp, A_boolExp, A_stringExp, A_callExp,
+      {enum {A_varExp, A_nilExp, A_intExp, A_realExp, 
+      	A_charExp, A_boolExp, A_stringExp, A_callExp,
          A_opExp, A_recordExp, A_seqExp, A_assignExp, A_ifExp,
-         A_whileExp, A_repeatExp, A_forExp, A_caseExp, A_caseValExp, A_gotoExp, A_breakExp, A_letExp, A_arrayExp} kind;
+         A_whileExp, A_repeatExp, A_forExp, A_caseExp, A_caseValExp, 
+         A_gotoExp, A_breakExp, A_letExp, A_arrayExp} kind;
        A_pos pos;
        union {
         A_var var;
@@ -80,25 +82,25 @@ struct A_dec_
      A_pos pos;
      union {A_fundecList function;
       /* escape may change after the initial declaration */
-      struct {S_symbol var; S_symbol typ; A_exp init; bool escape;} var;
+      struct {S_symbol var; A_ty typ; A_exp init; bool escape;} var;
       struct {S_symbol constt; A_exp init; bool escape;} constt;
       A_nametyList type;
     } u;
    };
-
+//所有的简单变量都是A_nameTy类型
 struct A_ty_ {enum {A_nameTy, A_recordTy, A_arrayTy, A_rangeTy, A_enumType} kind;
         A_pos pos;
         union {S_symbol name;
          A_fieldList record;
-         struct {struct A_ty_* range; S_symbol element;} arrayy;
+         struct {struct A_ty_* range; A_ty element;} arrayy;
          struct {A_exp lo, hi;} rangee;
          A_fieldList enumm;
        } u;
       };
 
 /* Linked lists and nodes of lists */
-
-struct A_field_ {S_symbol name, typ; A_pos pos; bool escape;};
+//name为变量名，typ为该变量的类型
+struct A_field_ {S_symbol name; A_ty typ; A_pos pos; bool escape;};
 struct A_fieldList_ {A_field head; A_fieldList tail;};
 struct A_expList_ {A_exp head; A_expList tail;};
 struct A_fundec_ {A_pos pos;
@@ -144,18 +146,18 @@ A_exp A_LetExp(A_pos pos, A_decList decs, A_exp body);
 A_expList A_ExpList(A_exp head, A_expList tail);
 
 A_dec A_ConstDec(A_pos pos, S_symbol constt, A_exp init);
-A_dec A_VarDec(A_pos pos, S_symbol var, S_symbol typ, A_exp init);
+A_dec A_VarDec(A_pos pos, S_symbol var, A_ty typ, A_exp init);
 A_dec A_TypeDec(A_pos pos, A_nametyList type);
 A_dec A_FunctionDec(A_pos pos, A_fundecList function);
 A_decList A_DecList(A_dec head, A_decList tail);
 
 A_ty A_NameTy(A_pos pos, S_symbol name);
 A_ty A_RecordTy(A_pos pos, A_fieldList record);
-A_ty A_ArrayTy(A_pos pos, A_ty range, S_symbol element);
+A_ty A_ArrayTy(A_pos pos, A_ty range, A_ty element);
 A_ty A_RangeTy(A_pos pos, A_exp lo, A_exp hi);
 A_ty A_EnumType(A_pos pos, A_fieldList valueList);
 
-A_field A_Field(A_pos pos, S_symbol name, S_symbol typ);
+A_field A_Field(A_pos pos, S_symbol name, A_ty typ);
 A_fieldList A_FieldList(A_field head, A_fieldList tail);
 
 A_fundec A_Fundec(A_pos pos, S_symbol name, A_fieldList params, S_symbol result,
