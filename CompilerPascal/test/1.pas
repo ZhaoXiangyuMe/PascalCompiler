@@ -3,7 +3,7 @@
               b = 2;
               c = 1.0;      
         type 
-            Temperatures = array [1..24] of Integer;
+            Temperatures = array [1..24] of integer;
             Date = record
                 Month: Byte;
                 Day: Byte;

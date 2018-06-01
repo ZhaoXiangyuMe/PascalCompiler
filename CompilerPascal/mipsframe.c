@@ -20,7 +20,7 @@ struct F_frame_ {
     Temp_label name;
     F_accessList formals;
     F_accessList formalsTail;
-    int localCount; /*local variables allocated so far*/ 
+    int localCount; /*local variables allocated in frame so far*/ 
 };
 
 // in frame
@@ -54,8 +54,6 @@ F_frame F_newFrame(Temp_label name, U_boolList formals) {
 	f->localCount = 0;
     for (;formals;formals = formals->tail) {
         F_allocLocal(f, formals->head);
-		if (formals->head)
-			f->localCount++;
     }
 
 	return f;
@@ -71,7 +69,7 @@ F_accessList F_formals(F_frame f) {
 }
 
 F_access F_allocLocal(F_frame f, bool escape) {
-    f->localCount++;
+	// only calculate num of variables in frame 
     if (escape) {
         // allocate in frame
         F_access frameLocal = InFrame(-1*(f->localCount)*F_wordSize);
@@ -81,6 +79,7 @@ F_access F_allocLocal(F_frame f, bool escape) {
             f->formalsTail->tail = F_AccessList(frameLocal, NULL);
             f->formalsTail = f->formalsTail->tail;
         }
+		f->localCount++;
         return frameLocal;
     }   
     else {
