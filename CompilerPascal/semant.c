@@ -59,10 +59,10 @@ static Typelist gettypelist(S_table varenv,A_fieldList list)
 
     while(ptr)
     {
-        tmpty=S_look(varenv,ptr->head->typ);
+        tmpty=S_look(varenv,ptr->head->typ->u.name);
         if(!tmpty)
         {
-            EM_error(ptr->head->pos,"Type %s undefined\n",S_name(ptr->head->typ));
+            EM_error(ptr->head->pos,"Type %s undefined\n",S_name(ptr->head->typ->u.name));
             tmpty=INT_type();
         }
         if(!head)//head==NULL
@@ -99,7 +99,7 @@ static Fieldlist getfieldlist(S_table varenv,A_fieldList list)
     {
         tmpty=S_look(varenv,ptr->head->typ->u.name);
         if(!tmpty)
-            EM_error(ptr->head->pos,"Type %s undefined\n",S_name(ptr->head->typ));
+            EM_error(ptr->head->pos,"Type %s undefined\n",S_name(ptr->head->typ->u.name));
         else
         {
             tmpfd=Newfield(ptr->head->name,tmpty);
@@ -327,7 +327,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
                 EM_error(exp->pos,"Too many parameters");
             
             //°ü×°³ÉT_expµÄÐÎÊ½
-            trans=Tr_CallExp(callinfo->u.fun.label,callinfo->u.fun.lev,l,&paramlist);
+            trans=Tr_CallExp(callinfo->u.fun.label,callinfo->u.fun.lev,l,paramlist);
             return Newexpty(trans,gettype(callinfo->u.fun.output));
         }
 				else
@@ -707,12 +707,12 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 //		                S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));               
 		            else
 		            {
-		                EM_error(dec->pos,"Type %s mismatch\n",S_name(dec->u.var.typ));
+		                EM_error(dec->pos,"Type %s mismatch\n",S_name(dec->u.var.typ->u.name));
 		                //S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp));
 		            }
 		        }
 		        else
-		            EM_error(dec->pos,"Type %s undefined\n",S_name(dec->u.var.typ));
+		            EM_error(dec->pos,"Type %s undefined\n",S_name(dec->u.var.typ->u.name));
         }
         else
         {
@@ -854,7 +854,7 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
     {
         tmptp=transType(l, e, funenv, varenv, ty->u.arrayy.element);//S_look(varenv,ty->u.arrayy.element);
         if(!tmptp)
-        	EM_error(ty->pos,"Type %s undefined\n",S_name(ty->u.arrayy.element));
+        	EM_error(ty->pos,"Type %s undefined\n",S_name(ty->u.arrayy.element->u.name));
         struct array temArrayInfo;
         temArrayInfo.tyEle = tmptp;
         struct expty low, high;

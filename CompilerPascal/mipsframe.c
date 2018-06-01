@@ -98,7 +98,7 @@ Temp_temp F_Fp(void) {
     } 
 
     F_fp = Temp_newtemp();
-    Temp_enter(F_tempMap, F_fp, "eax");
+   // Temp_enter(F_tempMap, F_fp, "eax");
 
     return F_fp;
 }
