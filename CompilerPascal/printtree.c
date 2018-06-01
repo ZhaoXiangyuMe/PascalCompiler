@@ -26,6 +26,8 @@ static char rel_oper[][12] = {
  
 static void pr_stm(FILE *out, T_stm stm, int d)
 {
+	if (!stm)
+		return;
   switch (stm->kind) {
   case T_SEQ:
     indent(out,d);
@@ -60,6 +62,8 @@ static void pr_stm(FILE *out, T_stm stm, int d)
 
 static void pr_tree_exp(FILE *out, T_exp exp, int d)
 {
+	if (!exp)
+		return;
   switch (exp->kind) {
   case T_BINOP:
     indent(out,d); fprintf(out, "BINOP(%s,\n", bin_oper[exp->u.BINOP.op]); 
@@ -85,6 +89,12 @@ static void pr_tree_exp(FILE *out, T_exp exp, int d)
   case T_CONST:
     indent(out,d); fprintf(out, "CONST %d", exp->u.CONST);
     break;
+  case T_DOUBLE:
+    indent(out,d); fprintf(out, "DOUBLE %lf", exp->u.DOUBLE);
+    break;
+  case T_CHAR:
+	  indent(out, d); fprintf(out, "CONST %c", exp->u.CHAR);
+	  break;
   case T_CALL:
     {T_expList args = exp->u.CALL.args;
      indent(out,d); fprintf(out, "CALL(\n"); pr_tree_exp(out, exp->u.CALL.fun,d+1);

@@ -728,7 +728,8 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
             */
             EM_error(dec->pos,"Type %s must be inited\n",S_name(dec->u.var.var));
         }
-        return Tr_AssignExp(Tr_SimpleVar(acc, l), tmp.exp);
+		return Tr_NoExp();
+       // return Tr_AssignExp(Tr_SimpleVar(acc, l), tmp.exp);
     }
     else if(dec->kind == A_constDec)
     {

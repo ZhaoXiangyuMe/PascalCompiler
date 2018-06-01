@@ -409,7 +409,7 @@ Tr_exp Tr_SeqExp(Tr_expList list) {
 		return NULL;
 
 	T_stm seq, tail;
-	seq = tail = unNx(list->head);
+	seq = tail = T_Seq (unNx(list->head), NULL);
 
 	for (list = list->tail;list;list = list->tail) {
 		tail->u.SEQ.right = unNx(list->head);
