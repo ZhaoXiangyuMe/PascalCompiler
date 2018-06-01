@@ -408,12 +408,16 @@ Tr_exp Tr_SeqExp(Tr_expList list) {
 	if (!list)
 		return NULL;
 
-	T_stm seq, tail;
+	/*T_stm seq, tail;
 	seq = tail = T_Seq (unNx(list->head), NULL);
 
 	for (list = list->tail;list;list = list->tail) {
 		tail->u.SEQ.right = unNx(list->head);
 		tail = tail->u.SEQ.right;
+	}*/
+	T_stm seq = unNx(list->head);
+	for (list = list->tail; list; list = list->tail) {
+		seq = T_Seq(unNx(list->head), seq);
 	}
 
 	return Tr_Nx(seq);

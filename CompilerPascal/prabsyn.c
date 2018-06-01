@@ -210,7 +210,16 @@ static void pr_dec(FILE *out, A_dec v, int d) {
 		case A_varDec:
 			fprintf(out, "varDec(%s,\n", S_name(v->u.var.var));
 			if (v->u.var.typ) {
-				indent(out, d+1); fprintf(out, "%s,\n", S_name(v->u.var.typ->u.name)); 
+				indent(out, d+1);
+				string typeStr = NULL;
+				if (v->u.var.typ->kind == A_nameTy)
+					typeStr = S_name(v->u.var.typ->u.name);
+				else if (v->u.var.typ->kind == A_arrayTy)
+					typeStr = "array";
+					//sprintf(typeStr, "array of %s", S_name(v->u.var.typ->u.arrayy.element->u.name));
+				else if (v->u.var.typ->kind == A_recordTy)
+					typeStr = "record";
+				fprintf(out, "%s,\n", typeStr); 
 			}
 			pr_exp(out, v->u.var.init, d+1); fprintf(out, ",\n");
 			indent(out, d+1); fprintf(out, "%s", v->u.var.escape ? "TRUE)" : "FALSE)");

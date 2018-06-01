@@ -496,8 +496,11 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         struct expty body;
         S_beginScope(funenv);
         S_beginScope(varenv);
-        for(declist=exp->u.let.decs;declist;declist=declist->tail)
-            list = Tr_ExpList(transDec(l,e,funenv,varenv,declist->head),list);
+      /*  for(declist=exp->u.let.decs;declist;declist=declist->tail)
+            list = Tr_ExpList(transDec(l,e,funenv,varenv,declist->head),list);*/
+       for(declist=exp->u.let.decs;declist;declist=declist->tail)
+           transDec(l,e,funenv,varenv,declist->head);
+
         body=transExp(l,e,funenv,varenv,exp->u.let.body);
         list = Tr_ExpList(body.exp, list);
         // Tr_explistnewhead(body.exp,&list);
@@ -742,11 +745,11 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
     		{
     				EM_error(dec->pos,"Const is not inited\n");
     		}
-    		else if(dec->u.var.init->kind!=A_intExp
-    			&&	dec->u.var.init->kind!=A_charExp
-    			&&	dec->u.var.init->kind!=A_realExp
-    			&&	dec->u.var.init->kind!=A_stringExp
-    			&&	dec->u.var.init->kind!=A_boolExp)
+    		else if(dec->u.constt.init->kind!=A_intExp
+    			&&	dec->u.constt.init->kind!=A_charExp
+    			&&	dec->u.constt.init->kind!=A_realExp
+    			&&	dec->u.constt.init->kind!=A_stringExp
+    			&&	dec->u.constt.init->kind!=A_boolExp)
     		{
     				EM_error(dec->pos,"Const initialization error\n");
     		}
