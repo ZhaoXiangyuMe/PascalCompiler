@@ -37,11 +37,17 @@ int main(int argc, char* argv[]) {
     F_fragList fragList = transProg(A_synTreeRoot);
 
     for (;fragList;fragList = fragList->tail) {
-        T_stmList stmList = C_linearize(fragList->head->u.proc.body);
+       /* T_stmList stmList = C_linearize(fragList->head->u.proc.body);
         printStmList(stdout, stmList);
 
-        stmList = C_traceSchedule(C_basicBlocks(stmList));
+        stmList = C_traceSchedule(C_basicBlocks(stmList));*/
+		T_stmList stmList = T_StmList(fragList->head->u.proc.body, NULL);
         printStmList(stdout, stmList); 
 
     }
+	
+	while (1) {
+		int r = 1;
+	}
+	return 0;
 }

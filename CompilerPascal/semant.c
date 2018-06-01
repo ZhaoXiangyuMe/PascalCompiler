@@ -23,6 +23,7 @@ F_fragList transProg(A_exp exp)
     S_table basevarenv=Base_varenv();
     exptype=transExp(Tr_outermost(),NULL,basefunenv,basevarenv,exp);
     printf("Expression with return type: %d\n",exptype.ty->flag);
+	Tr_procEntryExit(Tr_outermost(), exptype.exp, NULL);
     F_fragList ret=Tr_getResult();
 
     return ret;

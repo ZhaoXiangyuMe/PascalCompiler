@@ -68,7 +68,7 @@ static void pr_tree_exp(FILE *out, T_exp exp, int d)
     break;
   case T_MEM:
     indent(out,d); fprintf(out, "MEM");
-    fprintf(out, "(\n"); pr_tree_exp(out, exp->u.MEM.exp,d+1); fprintf(out, ")");
+    fprintf(out, "(\n"); pr_tree_exp(out, exp->u.MEM.exp,d+1); fprintf(out, "):%d", exp->u.MEM.size);
     break;
   case T_TEMP:
     indent(out,d); fprintf(out, "TEMP t%s", 
@@ -103,3 +103,7 @@ void printStmList (FILE *out, T_stmList stmList)
     pr_stm(out, stmList->head,0); fprintf(out, "\n");
   }
 }
+
+//void pr_tr_exp(FILE *out, Tr_exp exp) {
+//	pr_tree_exp(out, unEx(exp), 0);
+//}
