@@ -663,7 +663,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             EM_error(exp->pos,"Integer expected in repeat\n");
 //        Tr_exp done=doneExp();
         struct expty body = transExp(l, e, funenv, varenv, exp->u.repeatt.body);
-        return Newexpty(Tr_RepeatExp(num.exp, body.exp), VOID_type());
+        return Newexpty(Tr_RepeatExp(body.exp, num.exp), VOID_type());
     }
     /*
     caseÓï¾äÃ»ÓÐ·µ»ØÖµ
