@@ -294,7 +294,7 @@ Tr_exp Tr_FieldVar(Tr_exp addr, int offset, int size) {
 }
 
 Tr_exp Tr_SubscriptVar(Tr_exp addr, Tr_exp index, int size) {
-	return Tr_Ex(T_Mem(T_Binop(T_plus, unEx(addr), T_Binop(T_mul, unEx(index), T_Const(F_wordSize))), size));
+	return Tr_Ex(T_Mem(T_Binop(T_plus, unEx(addr), T_Binop(T_mul, unEx(index), T_Const(size))), size));
 }
 
 

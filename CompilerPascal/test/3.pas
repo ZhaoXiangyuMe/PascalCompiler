@@ -3,7 +3,6 @@ Program ex11;
         x, y, i, sum:integer;
         a:array [1..24] of integer;  
     Begin
-        a[1] := 0;
         if y < 0 then 
             Begin
                 x := 1;
@@ -21,10 +20,16 @@ Program ex11;
            y := y+i;
         End;
 
-         
+
         repeat
             Begin
                 x := x+1;
             End
-        until x > 1;    
+        until x > 1; 
+
+        case  x  of        
+            1:  y:=0;      
+            2:  y:=1;
+        end;  
+
     End.
