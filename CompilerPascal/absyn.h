@@ -92,7 +92,7 @@ struct A_ty_ {enum {A_nameTy, A_recordTy, A_arrayTy, A_rangeTy, A_enumType} kind
         A_pos pos;
         union {S_symbol name;
          A_fieldList record;
-         struct {struct A_ty_* range; A_ty element;} arrayy;
+         struct {A_ty range; A_ty element;} arrayy;
          struct {A_exp lo, hi;} rangee;
          A_fieldList enumm;
        } u;

@@ -863,8 +863,8 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         struct array temArrayInfo;
         temArrayInfo.tyEle = tmptp;
         struct expty low, high;
-        low = transExp(l, e, funenv, varenv, ty->u.rangee.lo);
-        high = transExp(l,e,funenv, varenv, ty->u.rangee.hi);
+        low = transExp(l, e, funenv, varenv, ty->u.arrayy.range->u.rangee.lo);
+        high = transExp(l,e,funenv, varenv, ty->u.arrayy.range->u.rangee.hi);
         if(!(low.ty->flag == INT || low.ty->flag == CHAR)
         	||!(high.ty->flag == INT || high.ty->flag == CHAR))
         	EM_error(ty->pos,"Array index type should be integer, char or const char, const integer.\n");

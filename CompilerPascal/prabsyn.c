@@ -210,17 +210,10 @@ static void pr_dec(FILE *out, A_dec v, int d) {
 		case A_varDec:
 			fprintf(out, "varDec(%s,\n", S_name(v->u.var.var));
 			if (v->u.var.typ) {
-				indent(out, d+1);
-				string typeStr = NULL;
-				if (v->u.var.typ->kind == A_nameTy)
-					typeStr = S_name(v->u.var.typ->u.name);
-				else if (v->u.var.typ->kind == A_arrayTy)
-					typeStr = "array";
-					//sprintf(typeStr, "array of %s", S_name(v->u.var.typ->u.arrayy.element->u.name));
-				else if (v->u.var.typ->kind == A_recordTy)
-					typeStr = "record";
-				fprintf(out, "%s,\n", typeStr); 
+				// indent(out, d+1);
+				pr_ty(out, v->u.var.typ, d+1);
 			}
+			fprintf(out, ",\n");
 			pr_exp(out, v->u.var.init, d+1); fprintf(out, ",\n");
 			indent(out, d+1); fprintf(out, "%s", v->u.var.escape ? "TRUE)" : "FALSE)");
 			break;
@@ -244,8 +237,16 @@ static void pr_ty(FILE *out, A_ty v, int d) {
 			pr_fieldList(out, v->u.record, d+1); fprintf(out, ")");
 			break;
 		case A_arrayTy:
-			fprintf(out, "arrayTy(%s)", S_name(v->u.arrayy.element->u.name));
+			fprintf(out, "arrayTy(%s)[", S_name(v->u.arrayy.element->u.name));
+			pr_ty(out, v->u.arrayy.range, 0);
+			fprintf(out, "]");
 			break;
+		case A_rangeTy:
+			fprintf(out, "rangeTy(");
+			pr_exp(out, v->u.rangee.lo, 0);
+			fprintf(out, "..");
+			pr_exp(out, v->u.rangee.hi, 0);
+			break;	
 		default:
 			assert(0); 
 	} 
