@@ -864,8 +864,8 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         tmptp=transType(l, e, funenv, varenv, ty->u.arrayy.element);//S_look(varenv,ty->u.arrayy.element);
         if(!tmptp)
         	EM_error(ty->pos,"Type %s undefined\n",S_name(ty->u.arrayy.element->u.name));
-        struct array temArrayInfo;
-        temArrayInfo.tyEle = tmptp;
+        struct array *temArrayInfo = checked_malloc(sizeof(*temArrayInfo));
+        temArrayInfo->tyEle = tmptp;
         struct expty low, high;
         low = transExp(l, e, funenv, varenv, ty->u.arrayy.range->u.rangee.lo);
         high = transExp(l,e,funenv, varenv, ty->u.arrayy.range->u.rangee.hi);
@@ -875,13 +875,13 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         else 
         if(low.ty->flag!=high.ty->flag)
         	EM_error(ty->pos,"Array index type is inconsistent.\n");
-        else if(ty->u.arrayy.range->u.rangee.lo == A_intExp){
-        	temArrayInfo.u.intt.start = ty->u.arrayy.range->u.rangee.lo->u.intt;
-		      temArrayInfo.u.intt.end = ty->u.arrayy.range->u.rangee.hi->u.intt;
+        else if(ty->u.arrayy.range->u.rangee.lo->kind == A_intExp){
+        	temArrayInfo->u.intt.start = ty->u.arrayy.range->u.rangee.lo->u.intt;
+		      temArrayInfo->u.intt.end = ty->u.arrayy.range->u.rangee.hi->u.intt;
         }
-        else if(ty->u.arrayy.range->u.rangee.lo == A_charExp){
-        	temArrayInfo.u.charr.start = ty->u.arrayy.range->u.rangee.lo->u.charr;
-		      temArrayInfo.u.charr.end = ty->u.arrayy.range->u.rangee.hi->u.charr;
+        else if(ty->u.arrayy.range->u.rangee.lo->kind == A_charExp){
+        	temArrayInfo->u.charr.start = ty->u.arrayy.range->u.rangee.lo->u.charr;
+		      temArrayInfo->u.charr.end = ty->u.arrayy.range->u.rangee.hi->u.charr;
         }
         else if(ty->u.rangee.lo->kind == A_varExp){
         	Environments getLoEnv = S_look(funenv, ty->u.arrayy.range->u.rangee.lo->u.var->u.simple);
@@ -891,12 +891,12 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         			if(getLoEnv->flag == CONST&&getHiEnv->flag == CONST)
         			{
         					if(low.ty->flag == INT){
-        						temArrayInfo.u.intt.start = getLoEnv->u.var.init->u.intt;
-		      					temArrayInfo.u.intt.end = getHiEnv->u.var.init->u.intt;
+        						temArrayInfo->u.intt.start = getLoEnv->u.var.init->u.intt;
+		      					temArrayInfo->u.intt.end = getHiEnv->u.var.init->u.intt;
         					}
         					else if(low.ty->flag == CHAR){
-        						temArrayInfo.u.charr.start = getLoEnv->u.var.init->u.charr;
-		      					temArrayInfo.u.charr.end = getHiEnv->u.var.init->u.charr;
+        						temArrayInfo->u.charr.start = getLoEnv->u.var.init->u.charr;
+		      					temArrayInfo->u.charr.end = getHiEnv->u.var.init->u.charr;
         					}
         			}
         			else EM_error(ty->pos,"The var at the array index should be const.\n");
@@ -904,7 +904,7 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         	else
         		EM_error(ty->pos,"The var at the array index are not defined.\n");
         }
-        
+		return ARRAY_type(temArrayInfo);
     }
 
     else
