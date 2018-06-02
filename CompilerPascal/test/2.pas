@@ -3,5 +3,9 @@ Program ex11;
         x, y:integer;
         a:array [1..24] of integer;    
     Begin
-        a[0] := 1;
+        case  x  of        
+            1:  y:=0;      
+            2:  y:=1;
+        end;
+
     End.
