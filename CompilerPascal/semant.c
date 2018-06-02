@@ -135,6 +135,7 @@ static int getSize(Type ty)
 					num = ty->u.arrayInfo->u.intt.end-ty->u.arrayInfo->u.intt.start+1;
 				else if(arrayTy->flag == CHAR)
 					num = ty->u.arrayInfo->u.charr.end-ty->u.arrayInfo->u.charr.start+1;
+				totalLen = num;
 				return num*getSize(ty->u.arrayInfo->tyEle);
 			}
 			case RECORD:{
@@ -225,7 +226,9 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             
             if(pt2.ty->flag==INT||pt2.ty->flag == CHAR)
             {
-            		int size = getSize(pt2.ty);
+            	int size = getSize(pt1.ty);
+				size /= totalLen;
+				totalLen = 0;
                 trans=Tr_SubscriptVar(pt1.exp,pt2.exp,size);
                 return Newexpty(trans,gettype(pt1.ty->u.arrayInfo->ty));
             }
@@ -869,6 +872,7 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         struct expty low, high;
         low = transExp(l, e, funenv, varenv, ty->u.arrayy.range->u.rangee.lo);
         high = transExp(l,e,funenv, varenv, ty->u.arrayy.range->u.rangee.hi);
+
         if(!(low.ty->flag == INT || low.ty->flag == CHAR)
         	||!(high.ty->flag == INT || high.ty->flag == CHAR))
         	EM_error(ty->pos,"Array index type should be integer, char or const char, const integer.\n");
@@ -876,10 +880,12 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         if(low.ty->flag!=high.ty->flag)
         	EM_error(ty->pos,"Array index type is inconsistent.\n");
         else if(ty->u.arrayy.range->u.rangee.lo->kind == A_intExp){
+			temArrayInfo->ty = low.ty;
         	temArrayInfo->u.intt.start = ty->u.arrayy.range->u.rangee.lo->u.intt;
 		      temArrayInfo->u.intt.end = ty->u.arrayy.range->u.rangee.hi->u.intt;
         }
         else if(ty->u.arrayy.range->u.rangee.lo->kind == A_charExp){
+			temArrayInfo->ty = low.ty;
         	temArrayInfo->u.charr.start = ty->u.arrayy.range->u.rangee.lo->u.charr;
 		      temArrayInfo->u.charr.end = ty->u.arrayy.range->u.rangee.hi->u.charr;
         }
@@ -891,10 +897,12 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         			if(getLoEnv->flag == CONST&&getHiEnv->flag == CONST)
         			{
         					if(low.ty->flag == INT){
+								temArrayInfo->ty = INT_type();;
         						temArrayInfo->u.intt.start = getLoEnv->u.var.init->u.intt;
 		      					temArrayInfo->u.intt.end = getHiEnv->u.var.init->u.intt;
         					}
         					else if(low.ty->flag == CHAR){
+								temArrayInfo->ty = CHAR_type();
         						temArrayInfo->u.charr.start = getLoEnv->u.var.init->u.charr;
 		      					temArrayInfo->u.charr.end = getHiEnv->u.var.init->u.charr;
         					}
