@@ -456,7 +456,11 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         struct expty left,right;
         left=transVar(l,e,funenv,varenv,exp->u.assign.var);
         right=transExp(l,e,funenv,varenv,exp->u.assign.exp);
-        if(!type_match(left.ty,right.ty))
+		if(right.ty->flag == CONST)
+		{
+			EM_error(exp->pos, "Cannot assign to the const\n");
+		}
+		else if(!type_match(left.ty,right.ty))
         {
         		if(left.exp == NULL){//ÓÃÓÚº¯Êý·µ»ØÖµÀàÐÍ¼ì²é
    							EM_error(nowCheckFun->pos, "incorrect return type in function '%s'", S_name(nowCheckFun->name));
