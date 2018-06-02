@@ -12,7 +12,7 @@ Program ex11;
 
         For i := 1 to 100 do
         Begin
-            y := y+i;
+            y := (y+i)*2 div 3;
         End;
 
         while  i < 100  do
