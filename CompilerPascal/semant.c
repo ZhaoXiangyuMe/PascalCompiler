@@ -875,17 +875,17 @@ static Type transType(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_ty ty)
         else 
         if(low.ty->flag!=high.ty->flag)
         	EM_error(ty->pos,"Array index type is inconsistent.\n");
-        else if(ty->u.rangee.lo->kind == A_intExp){
-        	temArrayInfo.u.intt.start = ty->u.rangee.lo->u.intt;
-		      temArrayInfo.u.intt.end = ty->u.rangee.hi->u.intt;
+        else if(ty->u.arrayy.range->u.rangee.lo == A_intExp){
+        	temArrayInfo.u.intt.start = ty->u.arrayy.range->u.rangee.lo->u.intt;
+		      temArrayInfo.u.intt.end = ty->u.arrayy.range->u.rangee.hi->u.intt;
         }
-        else if(ty->u.rangee.lo->kind == A_charExp){
-        	temArrayInfo.u.charr.start = ty->u.rangee.lo->u.charr;
-		      temArrayInfo.u.charr.end = ty->u.rangee.hi->u.charr;
+        else if(ty->u.arrayy.range->u.rangee.lo == A_charExp){
+        	temArrayInfo.u.charr.start = ty->u.arrayy.range->u.rangee.lo->u.charr;
+		      temArrayInfo.u.charr.end = ty->u.arrayy.range->u.rangee.hi->u.charr;
         }
         else if(ty->u.rangee.lo->kind == A_varExp){
-        	Environments getLoEnv = S_look(funenv, ty->u.rangee.lo->u.var->u.simple);
-        	Environments getHiEnv = S_look(funenv, ty->u.rangee.hi->u.var->u.simple);
+        	Environments getLoEnv = S_look(funenv, ty->u.arrayy.range->u.rangee.lo->u.var->u.simple);
+        	Environments getHiEnv = S_look(funenv, ty->u.arrayy.range->u.rangee.hi->u.var->u.simple);
         	if(getLoEnv&&getHiEnv)
         	{
         			if(getLoEnv->flag == CONST&&getHiEnv->flag == CONST)
