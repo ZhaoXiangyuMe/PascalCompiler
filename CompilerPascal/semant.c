@@ -282,19 +282,20 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
                 return Newexpty(Tr_NoExp(),RECORD_type(NULL));
             }
             Fieldlist fieldTyList = recordTy->u.record;
+			U_intList itemSizeList = NULL;
 		    		for(itemList; itemList; itemList = itemList->tail, fieldTyList = fieldTyList->next, n++){
 		    				struct expty et = transExp(l, e, funenv, varenv, itemList->head->exp);
-								if (itemList->head->name != fieldTyList->head->name) 
+							if (itemList->head->name != fieldTyList->head->name) 
 				              EM_error(exp->pos, "%s not a valid field name", itemList->head->name);
-								if (!type_match(fieldTyList->head->ty, et.ty)) 
+							if (!type_match(fieldTyList->head->ty, et.ty)) 
 				              EM_error(itemList->head->exp->pos, "Type mismatch");
-				        
+							itemSizeList = U_IntList(getSize(et.ty), itemSizeList);
 				        //½«Tr_expÁ¬½ÓÆðÀ´
 								// Tr_explistnewhead(et.exp, &fields);
                             fields = Tr_ExpList(et.exp, fields);
 				        
 		    		}
-		    		return Newexpty(Tr_RecordExp(n, fields), recordTy);
+		    		return Newexpty(Tr_RecordExp(itemSizeList, fields), recordTy);
     		}
         return Newexpty(Tr_NoExp(),RECORD_type(NULL));
     }
@@ -709,10 +710,12 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
         Type tmptp;
         Tr_access acc; 
         tmp=transExp(l,e,funenv,varenv,NULL);
-        acc=Tr_allocLocal(l,dec->u.var.escape);
         if(dec->u.var.typ)
         {
 		        tmptp=transType(l, e, funenv, varenv, dec->u.var.typ);
+				int size = getSize(tmptp);
+				totalLen = 0;
+				acc = Tr_allocLocal(l, dec->u.var.escape, size);
 		        if(tmptp)
 		        {
 		        		if(!dec->u.var.init)
@@ -752,7 +755,7 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
     		Type tmpty;
     		Tr_access acc;
     		getExp = transExp(l,e,funenv, varenv, dec->u.constt.init);
-    		acc = Tr_allocLocal(l, dec->u.constt.escape);
+    		acc = Tr_allocLocal(l, dec->u.constt.escape, getSize(getExp.ty));
     		if(!dec->u.var.init)
     		{
     				EM_error(dec->pos,"Const is not inited\n");
@@ -798,7 +801,12 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 				resTy = VOID_type();
 			formalTys = gettypelist(varenv, fcl->head->params);
 			Temp_label funLabel = Temp_newlabel();
-			Tr_level lev = Tr_newLevel(l, funLabel, makeFormals(fcl->head->params));/* create a new level */
+			U_intList paramSizeList = NULL;
+			for (Typelist ty = formalTys; ty; ty = ty->next)
+			{
+				paramSizeList = U_IntList(getSize(ty->head), paramSizeList);
+			}
+			Tr_level lev = Tr_newLevel(l, funLabel, makeFormals(fcl->head->params), paramSizeList);/* create a new level */
 			Environments value = Newfunenv(lev, funLabel, formalTys, resTy);
 			S_enter(funenv, fcl->head->name, value);
 		}
