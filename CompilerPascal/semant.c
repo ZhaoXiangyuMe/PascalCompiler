@@ -112,6 +112,7 @@ static Fieldlist getfieldlist(S_table varenv,A_fieldList list)
                 tail=tail->next;
             }
         }
+		ptr = ptr->tail;
     }
     return head;
 }
@@ -505,8 +506,12 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         S_beginScope(varenv);
       /*  for(declist=exp->u.let.decs;declist;declist=declist->tail)
             list = Tr_ExpList(transDec(l,e,funenv,varenv,declist->head),list);*/
-       for(declist=exp->u.let.decs;declist;declist=declist->tail)
-           transDec(l,e,funenv,varenv,declist->head);
+		int count = 0;
+		for (declist = exp->u.let.decs; declist; declist = declist->tail) {
+			printf("%d", count++);
+			transDec(l, e, funenv, varenv, declist->head);
+		
+		}
 
         body=transExp(l,e,funenv,varenv,exp->u.let.body);
         list = Tr_ExpList(body.exp, list);
@@ -780,40 +785,40 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
         Typelist s;
         for (fcl = dec->u.function; fcl; fcl = fcl->tail)
         {
-						if (fcl->head->result)
+			if (fcl->head->result)
             {
-								resTy = S_look(varenv, fcl->head->result);
-								if (!resTy)
+				resTy = S_look(varenv, fcl->head->result);
+				if (!resTy)
                 {
-										EM_error(fcl->head->pos, "undefined type for return type");
-										resTy = VOID_type();
-								}
-						}
+						EM_error(fcl->head->pos, "undefined type for return type");
+						resTy = VOID_type();
+				}
+			}
             else
-								resTy = VOID_type();
-						formalTys = gettypelist(varenv, fcl->head->params);
-						Temp_label funLabel = Temp_newlabel();
-						Tr_level lev = Tr_newLevel(l, funLabel, makeFormals(fcl->head->params));/* create a new level */
-						Environments value = Newfunenv(lev, funLabel, formalTys, resTy);
-						S_enter(funenv, fcl->head->name, value);
-				}
-				//»ñÈ¡·ûºÅ£¬½«·ûºÅ£¬¼ÓÈëµ½»·¾³ÖÐ
-				for (fcl = dec->u.function; fcl; fcl = fcl->tail)
-				{
-						f = fcl->head;
-						Environments funEntry = (Environments)S_look(funenv, f->name); /*get fun-info*/
-						S_beginScope(funenv);							//ÊµÏÖÄÚ²ãº¯Êý·ÃÎÊÍâ²ã±äÁ¿
-						formalTys = funEntry->u.fun.param;
-						Tr_accessList acls = Tr_formals(funEntry->u.fun.lev);
-						for (list = f->params, s = formalTys; list && s && acls; list = list->tail, s = s->next, acls = acls->tail)
-							S_enter(funenv, list->head->name, Newvarenv(acls->head, s->head, 0));
-						nowCheckFun = f;
-						transExp(funEntry->u.fun.lev, e, funenv, varenv, f->body);
-						nowCheckFun = NULL;
-						Tr_procEntryExit(funEntry->u.fun.lev, final.exp, acls);
-						S_endScope(funenv);
-				}
-				return Tr_NoExp();
+				resTy = VOID_type();
+			formalTys = gettypelist(varenv, fcl->head->params);
+			Temp_label funLabel = Temp_newlabel();
+			Tr_level lev = Tr_newLevel(l, funLabel, makeFormals(fcl->head->params));/* create a new level */
+			Environments value = Newfunenv(lev, funLabel, formalTys, resTy);
+			S_enter(funenv, fcl->head->name, value);
+		}
+		//»ñÈ¡·ûºÅ£¬½«·ûºÅ£¬¼ÓÈëµ½»·¾³ÖÐ
+		for (fcl = dec->u.function; fcl; fcl = fcl->tail)
+		{
+				f = fcl->head;
+				Environments funEntry = (Environments)S_look(funenv, f->name); /*get fun-info*/
+				S_beginScope(funenv);							//ÊµÏÖÄÚ²ãº¯Êý·ÃÎÊÍâ²ã±äÁ¿
+				formalTys = funEntry->u.fun.param;
+				Tr_accessList acls = Tr_formals(funEntry->u.fun.lev);
+				for (list = f->params, s = formalTys; list && s && acls; list = list->tail, s = s->next, acls = acls->tail)
+					S_enter(funenv, list->head->name, Newvarenv(acls->head, s->head, 0));
+				nowCheckFun = f;
+				final = transExp(funEntry->u.fun.lev, e, funenv, varenv, f->body);
+				nowCheckFun = NULL;
+				Tr_procEntryExit(funEntry->u.fun.lev, final.exp, acls);
+				S_endScope(funenv);
+		}
+		return Tr_NoExp();
     }
     else if(dec->kind==A_typeDec)
     {

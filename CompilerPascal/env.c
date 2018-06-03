@@ -46,39 +46,38 @@ S_table Base_varenv(void)					//定义有问题，这里应该是提前给定的变量类型！！！
 }
 S_table Base_funenv(void)									//暂时不变，等以后再说！！！
 {
-	S_table base=S_empty();
+	S_table base = S_empty();
 	S_enter(base,
-    S_Symbol("print"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),VOID_type())
-	);  //void print(string)
-	S_enter(base,S_Symbol("getchar"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),NULL,VOID_type())
-	);  //void getchcar(void)
-	S_enter(base,S_Symbol("chr"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(INT_type(),NULL),STRING_type())
+		S_Symbol("write"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(STRING_type(), NULL), VOID_type())
+	);  //void write(string)
+	S_enter(base,
+		S_Symbol("writeln"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(STRING_type(), NULL), VOID_type())
+	);  //void writeln(string)
+	S_enter(base, S_Symbol("abs"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(INT_type(), NULL), INT_type())
+	); //int abs(int)
+	S_enter(base, S_Symbol("chr"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(INT_type(), NULL), STRING_type())
 	); //string chr(int)
-	S_enter(base,S_Symbol("size"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),INT_type())
-	); //int size(string)
-	S_enter(base,S_Symbol("not"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(INT_type(),NULL),INT_type())
-	); //int not(int)
-	S_enter(base,S_Symbol("exit"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(INT_type(),NULL),VOID_type())
-	); //void exit(int)
-	S_enter(base,S_Symbol("substring"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),
-	Newtypelist(INT_type(),Newtypelist(INT_type(),NULL))),STRING_type())
-	); //string substing(string,int start,int end)
-	S_enter(base,S_Symbol("ord"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),NULL),INT_type())
-	); //int ord(string)
-	S_enter(base,S_Symbol("concat"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),Newtypelist(STRING_type(),
-	Newtypelist(STRING_type(),NULL)),STRING_type())
-	); //string concat(string1,string2)
-	S_enter(base,S_Symbol("flush"),
-	Newfunenv(Tr_outermost(),Temp_newlabel(),NULL,VOID_type())
-	); //void flush(void)
+	S_enter(base, S_Symbol("odd"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(INT_type(), NULL), BOOLEAN_type())
+	); //boolean odd(int)
+	S_enter(base, S_Symbol("ord"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(CHAR_type(), NULL), INT_type())
+	); //int ord(char)
+	S_enter(base, S_Symbol("pred"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(INT_type(), NULL), INT_type())
+	); //int pred(int)
+	S_enter(base, S_Symbol("succ"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(INT_type(), NULL), INT_type())
+	); //int succ(int)
+	S_enter(base, S_Symbol("sqr"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(INT_type(), NULL), INT_type())
+	); //int sqr(int)
+	S_enter(base, S_Symbol("sqr"),
+		Newfunenv(Tr_outermost(), Temp_newlabel(), Newtypelist(INT_type(), NULL), REAL_type())
+	); //real sqrt(int)
 	return base;
 }
