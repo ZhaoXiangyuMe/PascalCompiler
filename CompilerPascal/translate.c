@@ -372,7 +372,7 @@ Tr_exp Tr_RecordExp(U_intList fieldsSizes, Tr_expList fields) {
 	for (fields = fields->tail, fieldsSizes = fieldsSizes->tail;fields&&fieldsSizes;fields = fields->tail,fieldsSizes = fieldsSizes->tail) {
 		tail->u.SEQ.right = T_Seq(T_Move(T_Mem(T_Binop(T_plus, T_Temp(addrTemp), T_Const(-offset)), fieldsSizes->head), unEx(fields->head)), NULL);
 		tail = tail->u.SEQ.right;
-		offset += fieldsSizes->tail;
+		offset += fieldsSizes->head;
 	}
 
 	// allocate memory at first 

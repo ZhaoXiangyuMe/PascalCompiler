@@ -11,7 +11,7 @@ static Temp_temp F_ra = NULL;
 struct  F_access_ {
     enum {inFrame, inReg} kind;
     union {
-        struct {int offset; int size} frame;/*in frame, offset from fp, occupy size in memory*/
+		struct { int offset; int size; } frame;/*in frame, offset from fp, occupy size in memory*/
         Temp_temp reg; /*in reg, reg number*/
     } u;
 };
