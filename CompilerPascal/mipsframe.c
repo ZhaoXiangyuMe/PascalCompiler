@@ -11,7 +11,7 @@ static Temp_temp F_ra = NULL;
 struct  F_access_ {
     enum {inFrame, inReg} kind;
     union {
-        int offset; /*in frame, offset from fp*/
+        struct {int offset; int size} frame;/*in frame, offset from fp, occupy size in memory*/
         Temp_temp reg; /*in reg, reg number*/
     } u;
 };
@@ -20,14 +20,15 @@ struct F_frame_ {
     Temp_label name;
     F_accessList formals;
     F_accessList formalsTail;
-    int localCount; /*local variables allocated in frame so far*/ 
+    int ptrPos; /*local variables allocated in frame so far*/ 
 };
 
 // in frame
-static F_access InFrame(int offset) {
+static F_access InFrame(int offset, int size) {
     F_access access = checked_malloc(sizeof(*access));
     access->kind = inFrame;
-    access->u.offset = offset;
+    access->u.frame.offset = offset;
+    access->u.frame.size = size;
     return access;
 }
 
@@ -47,13 +48,13 @@ F_accessList F_AccessList(F_access head, F_accessList tail) {
 }
 
 
-F_frame F_newFrame(Temp_label name, U_boolList formals) {
+F_frame F_newFrame(Temp_label name, U_boolList formals, U_intList formalsSizes) {
     F_frame f = checked_malloc(sizeof(*f));
     f->name = name;
     f->formalsTail = f->formals = NULL;
-	f->localCount = 0;
-    for (;formals;formals = formals->tail) {
-        F_allocLocal(f, formals->head);
+	
+    for (;formals, formalsSizes;formals = formals->tail, formalsSizes = formalsSizes->tail) {
+        F_allocLocal(f, formals->head, formalsSizes->head);
     }
 
 	return f;
@@ -68,18 +69,19 @@ F_accessList F_formals(F_frame f) {
     return f->formals;
 }
 
-F_access F_allocLocal(F_frame f, bool escape) {
+F_access F_allocLocal(F_frame f, bool escape, int size) {
 	// only calculate num of variables in frame 
-    if (escape) {
+    if (escape||size > 4) {
         // allocate in frame
-        F_access frameLocal = InFrame(-1*(f->localCount)*F_wordSize);
+        f->ptrPos -= size;
+        F_access frameLocal = InFrame(f->ptrPos, size);
         if (!(f->formals)) {
             f->formalsTail = f->formals = F_AccessList(frameLocal, NULL);
         } else {
             f->formalsTail->tail = F_AccessList(frameLocal, NULL);
             f->formalsTail = f->formalsTail->tail;
         }
-		f->localCount++;
+		
         return frameLocal;
     }   
     else {
@@ -143,7 +145,7 @@ Temp_temp F_Ra(void) {
 T_exp F_Exp(F_access access, T_exp framePtr) {
     if (access->kind == inFrame) 
         // in frame, return T_mem  
-        return T_Mem(T_Binop(T_plus, framePtr, T_Const(access->u.offset)), F_wordSize);
+        return T_Mem(T_Binop(T_plus, framePtr, T_Const(access->u.frame.offset)), access->u.frame.size);
     else  
         // in register, return T_temp
         return T_Temp(access->u.reg);

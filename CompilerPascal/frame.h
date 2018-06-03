@@ -41,10 +41,10 @@ Temp_temp F_Fp(void);
 extern const int F_wordSize;	
 
 F_accessList F_AccessList(F_access head, F_accessList tail);
-F_frame F_newFrame(Temp_label name, U_boolList formals);
+F_frame F_newFrame(Temp_label name, U_boolList formals, U_intList formalsSizes);
 Temp_label F_name(F_frame f);
 F_accessList F_formals(F_frame f);
-F_access F_allocLocal(F_frame f, bool escape);
+F_access F_allocLocal(F_frame f, bool escape, int size);
 
 // return address of access 
 // T_exp is address of stack frame 

@@ -97,19 +97,19 @@ Tr_level Tr_outermost(void) {
 	// need to create outermost layer 
 	if (!outermost) {
 		// parent should be null 
-		outermost = Tr_newLevel(NULL, Temp_newlabel(), NULL);
+		outermost = Tr_newLevel(NULL, Temp_newlabel(), NULL, NULL);
 	}
 
 	return outermost;
 }
 
 // create a new level 
-Tr_level Tr_newLevel(Tr_level parent, Temp_label name, U_boolList formals) {
+Tr_level Tr_newLevel(Tr_level parent, Temp_label name, U_boolList formals, U_intList formalsSizes) {
 	Tr_level level = checked_malloc(sizeof(*level));
 	level->parent = parent;
 	level->name = name;
 	// add static link 
-	level->frame = F_newFrame(name, U_BoolList(TRUE, formals));
+	level->frame = F_newFrame(name, U_BoolList(TRUE, formals), U_IntList(4, formalsSizes));
 
 	return level;
 }
@@ -141,8 +141,8 @@ Tr_accessList Tr_formals(Tr_level level) {
 	return head;
 }
 
-Tr_access Tr_allocLocal(Tr_level level, bool escape) {
-	Tr_access access = Tr_Access(level, F_allocLocal(level->frame, escape));
+Tr_access Tr_allocLocal(Tr_level level, bool escape, int size) {
+	Tr_access access = Tr_Access(level, F_allocLocal(level->frame, escape, size));
 
 	return access;
 }
@@ -358,23 +358,24 @@ Tr_exp Tr_OpExp(A_oper op, Tr_exp left, Tr_exp right) {
 	return Tr_Ex(T_Binop(tOp, unEx(left), unEx(right)));
 }
 
-Tr_exp Tr_RecordExp(int* sizes, Tr_expList fields) {
+Tr_exp Tr_RecordExp(U_intList fieldsSizes, Tr_expList fields) {
+	if (!fieldsSizes||!fields)
+		return;
 	// start address of record 
 	Temp_temp addrTemp = Temp_newtemp();
 	int offset = 0;
 
-	T_stm seq = T_Seq(T_Move(T_Mem(T_Binop(T_plus, T_Temp(addrTemp), T_Const(0)), sizes[0]), unEx(fields->head)), NULL);
-	offset += sizes[0];
+	T_stm seq = T_Seq(T_Move(T_Mem(T_Binop(T_plus, T_Temp(addrTemp), T_Const(0)), fieldsSizes->head), unEx(fields->head)), NULL);
+	offset += fieldsSizes->head;
 
 	T_stm tail = seq;
-
-	int i = 1;
-	for (fields = fields->tail;fields;fields = fields->tail,i++) {
-		tail->u.SEQ.right = T_Seq(T_Move(T_Mem(T_Binop(T_plus, T_Temp(addrTemp), T_Const(offset)), sizes[i]), unEx(fields->head)), NULL);
+	for (fields = fields->tail, fieldsSizes = fieldsSizes->tail;fields&&fieldsSizes;fields = fields->tail,fieldsSizes = fieldsSizes->tail) {
+		tail->u.SEQ.right = T_Seq(T_Move(T_Mem(T_Binop(T_plus, T_Temp(addrTemp), T_Const(-offset)), fieldsSizes->head), unEx(fields->head)), NULL);
 		tail = tail->u.SEQ.right;
-		offset += sizes[i];
+		offset += fieldsSizes->tail;
 	}
 
+	// allocate memory at first 
 	T_stm alloc = T_Move(T_Temp(addrTemp), T_Call(T_Name(Temp_namedlabel("malloc")), 
 												T_ExpList(T_Const(offset), NULL)));
 

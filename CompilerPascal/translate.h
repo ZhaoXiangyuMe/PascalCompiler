@@ -3,6 +3,7 @@
 #include "temp.h"
 #include "frame.h"
 #include "absyn.h"
+#include "util.h"
 
 typedef struct Tr_access_ *Tr_access;
 typedef struct Tr_accessList_ *Tr_accessList;
@@ -36,10 +37,10 @@ struct Tr_accessList_ {
 // parent of main function 
 Tr_level Tr_outermost(void);
 // create a new level for given function 
-Tr_level Tr_newLevel(Tr_level parent, Temp_label name, U_boolList formals);
+Tr_level Tr_newLevel(Tr_level parent, Temp_label name, U_boolList formals, U_intList formalsSizes);
 
 Tr_accessList Tr_formals(Tr_level level);
-Tr_access Tr_allocLocal(Tr_level level, bool escape);
+Tr_access Tr_allocLocal(Tr_level level, bool escape, int size);
 
 T_exp Tr_getStaticLink(Tr_level call, Tr_level def);
 
@@ -56,7 +57,7 @@ Tr_exp Tr_RealExp(double r);
 Tr_exp Tr_CharExp(char c);
 Tr_exp Tr_StringExp(int size, string str);
 // sizes: size of each field in record 
-Tr_exp Tr_RecordExp(int* sizes, Tr_expList fields);
+Tr_exp Tr_RecordExp(U_intList sizes, Tr_expList fields);
 // size: size of element in array
 Tr_exp Tr_ArrayExp(int size, int totalLen, Tr_expList initList);
 
