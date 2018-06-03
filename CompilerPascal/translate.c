@@ -346,13 +346,15 @@ Tr_exp Tr_CallExp(Temp_label label, Tr_level call, Tr_level dec, Tr_expList args
 
 Tr_exp Tr_OpExp(A_oper op, Tr_exp left, Tr_exp right) {
 	T_binOp tOp;
-	if (op == A_plusOp) 
+	if (op == A_plusOp)
 		tOp = T_plus;
-	else if (op = A_minusOp)
+	else if (op == A_minusOp)
 		tOp = T_minus;
 	else if (op == A_timesOp)
 		tOp = T_mul;
 	else if (op == A_divideOp)
+		tOp = T_div;
+	else if (op == A_minusOp)
 		tOp = T_div;
 
 	return Tr_Ex(T_Binop(tOp, unEx(left), unEx(right)));
@@ -360,7 +362,7 @@ Tr_exp Tr_OpExp(A_oper op, Tr_exp left, Tr_exp right) {
 
 Tr_exp Tr_RecordExp(U_intList fieldsSizes, Tr_expList fields) {
 	if (!fieldsSizes||!fields)
-		return;
+		return NULL;
 	// start address of record 
 	Temp_temp addrTemp = Temp_newtemp();
 	int offset = 0;

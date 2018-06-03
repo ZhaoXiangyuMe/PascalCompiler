@@ -52,6 +52,7 @@ F_frame F_newFrame(Temp_label name, U_boolList formals, U_intList formalsSizes) 
     F_frame f = checked_malloc(sizeof(*f));
     f->name = name;
     f->formalsTail = f->formals = NULL;
+	f->ptrPos = 0;
 	
     for (;formals, formalsSizes;formals = formals->tail, formalsSizes = formalsSizes->tail) {
         F_allocLocal(f, formals->head, formalsSizes->head);

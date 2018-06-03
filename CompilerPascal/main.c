@@ -27,7 +27,7 @@ int parse(string fname) {
 int main(int argc, char* argv[]) {
     FILE* out = stdout;
 	if (argc < 2)
-		parse("test/3.pas");
+		parse("test/2.pas");
 	else 
 	    parse(argv[1]);
     fprintf(out, "\n---Abstract Syntax Tree---\n");
@@ -42,8 +42,8 @@ int main(int argc, char* argv[]) {
 
         stmList = C_traceSchedule(C_basicBlocks(stmList));*/
 		T_stmList stmList = T_StmList(fragList->head->u.proc.body, NULL);
+		fprintf(stdout, "\n------\n");
         printStmList(stdout, stmList); 
-
     }
 	
 	while (1) {
