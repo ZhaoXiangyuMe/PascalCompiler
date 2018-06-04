@@ -25,7 +25,6 @@ Program ex11;
             else max := y;           
         End;  
     Begin
-        x := x div y;
         con := 2;
         y := 1;
     End.

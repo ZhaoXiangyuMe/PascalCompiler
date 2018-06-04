@@ -42,12 +42,19 @@ static U_boolList makeFormals(A_fieldList params)
 	A_fieldList p = params;
 	for (; p; p = p->tail) {
 		if (head) {
+			tail->tail = U_BoolList(p->head->escape, NULL);
+			tail = tail->tail;
+		}
+		else {
+			tail = head = U_BoolList(p->head->escape, NULL);
+		}
+		/*if (head) {
 			tail->tail = U_BoolList(TRUE, NULL);
 			tail = tail->tail;
 		} else {
 			head = U_BoolList(TRUE, NULL);
 			tail = head;
-		}
+		}*/
 	}
 	return head;
 }

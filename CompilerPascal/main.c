@@ -5,6 +5,7 @@
 #include "semant.h"
 #include "printtree.h"
 #include "canon.h"
+#include "escape.h"
 #include <stdio.h>
 
 extern A_exp A_synTreeRoot;
@@ -27,11 +28,13 @@ int parse(string fname) {
 int main(int argc, char* argv[]) {
     FILE* out = stdout;
 	if (argc < 2)
-		parse("test/2.pas");
+		parse("test/1.pas");
 	else 
 	    parse(argv[1]);
     fprintf(out, "\n---Abstract Syntax Tree---\n");
     pr_exp(out, A_synTreeRoot, 0);
+    // find escape of variables 
+    Esc_findEscape(A_synTreeRoot);
 
     fprintf(out, "\n---IR Tree---\n");
     F_fragList fragList = transProg(A_synTreeRoot);

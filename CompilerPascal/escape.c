@@ -13,9 +13,10 @@ static escapeEntry EscapeEntry(int depth, bool *escape) {
     entry->depth = depth;
     entry->escape = escape;
     *escape = FALSE;
+	return entry;
 }
 
-S_table escapeEnv;
+static S_table escapeEnv;
 
 static void traverseExp(S_table env, int depth, A_exp e);
 static void traverseDec(S_table env, int depth, A_dec d);
@@ -151,7 +152,7 @@ static void traverseVar(S_table env, int depth, A_var v) {
     switch (v->kind) {
         case A_simpleVar: {
             // look up in table 
-            escapeEntry entry = S_look(env, v->u.simple);
+            escapeEntry entry = (escapeEntry)S_look(env, v->u.simple);
             // used at depth > decalaration depth 
             // set escape to true 
             if (entry&&depth>entry->depth) {

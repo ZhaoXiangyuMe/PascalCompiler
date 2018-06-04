@@ -74,6 +74,7 @@ Tr_exp Tr_GotoExp(Tr_exp pos);
 // for should be converted into while from abstract syntax 
 // Tr_exp Tr_ForExp(A_pos pos, S_symbol var, A_exp lo, A_exp hi, A_exp body);
 Tr_exp Tr_BreakExp(Tr_exp pos);
+Tr_exp Tr_RetExp(Tr_exp val);
 
 void Tr_procEntryExit(Tr_level level, Tr_exp body, Tr_accessList formals);
 F_fragList Tr_getResult();
