@@ -73,13 +73,13 @@ A_decList A_unDecList(A_fieldList fieldList);
 %type <sym> id sys_con sys_funct sys_proc sys_type
 %type <ty> type_decl simple_type_decl array_type_decl record_type_decl
 %type <fieldlist> field_decl_list field_decl name_list parameters para_type_list para_decl_list var_para_list val_para_list
-%type <cval> stat;
+%type <cval> error_stmt;
 
 %start program
 
 %%
-program : program_head routine DOT {/*set root for abstract syntax tree*/ A_synTreeRoot = $2; /*printf("Program parsed.\n");*/}
-program_head : PROGRAM id SEMI {/*printf("Program head.\n");*/}
+program : program_head routine DOT {/*set root for abstract syntax tree*/ A_synTreeRoot = $2; }
+program_head : PROGRAM id SEMI {}
 routine : routine_head routine_body {/*head:declaration with type A_decList,  body:expression with type A_exp*/ $$ = A_LetExp(EM_tokPos, $1, $2);}
 routine_head    : label_part const_part type_part var_part routine_part { 
         /* placeholder*/
@@ -102,6 +102,8 @@ const_part  : CONST const_expr_list {/*const declaration part*/ $$ = $2;}
             |  {/*no const declaration*/ $$ = NULL;}
 const_expr_list : id EQUAL const_value SEMI const_expr_list  {/*const declaration list*/ $$ = A_DecList(A_ConstDec(EM_tokPos, $1, $3),$5);}
                 | id EQUAL const_value SEMI {/*first one in list*/ $$ = A_DecList(A_ConstDec(EM_tokPos, $1, $3), NULL);}
+                | error_stmt const_expr_list {/*run into error*/ $$ = $2;}
+                | error_stmt {$$ = NULL;}
 const_value : INTEGER {/*integer value*/ $$ = A_IntExp(EM_tokPos, $1);}
             | REAL{/*real value*/ $$ = A_RealExp(EM_tokPos, $1);}
             | CHAR{/*char value*/ $$ = A_CharExp(EM_tokPos, $1);}
@@ -113,6 +115,8 @@ type_part   : TYPE type_decl_list {/*type declaration part*/ $$ = A_DecList(A_Ty
             | {/*no type declaration*/ $$ = NULL;}
 type_decl_list  : type_definition type_decl_list   {/*type declaration list*/ $$ = A_NametyList($1, $2);}
                 | type_definition {/*last type definition, tail points to NULL*/$$ = A_NametyList($1, NULL);}
+                | error_stmt type_decl_list{/*run into error*/ $$ = $2;}
+                | error_stmt {$$ = NULL;}
 type_definition : id  EQUAL  type_decl  SEMI {/*type declaration*/$$ =A_Namety($1, $3);}
 type_decl   :  simple_type_decl  {/*simple type*/ $$ = $1;}
             |  array_type_decl  {/*array type*/ $$ = $1;}
@@ -138,6 +142,8 @@ var_part    : VAR  var_decl_list {/*variable declaration part*/ $$ = $2;}
             |  {/*no variable declaration*/ $$ = NULL;}
 var_decl_list   : var_decl var_decl_list  {/*variable declaration list*/ $$ = A_linkDecList($1, $2);} 
                 | var_decl {$$ = $1;}
+                | error_stmt var_decl_list {$$ = $2;}
+                | error_stmt {$$ = NULL;}
 var_decl :  name_list  COLON  type_decl  SEMI {/*change name_list to variable declaration list*/ $$ = A_setDecListType(A_unDecList($1), $3);}
 
 
@@ -164,7 +170,7 @@ routine_body : compound_stmt {/*set routine body as A_exp*/ $$ = $1;}
 compound_stmt : BEGIN_T  stmt_list  END { $$ = A_SeqExp(EM_tokPos, $2);}
 stmt_list : stmt  SEMI stmt_list { /*statement in routine body*/$$ = A_ExpList($1, $3);}
             | {$$ = NULL;}
-            | stat {$$ = NULL;}
+            | error_stmt stmt_list {$$ = $2;}
 stmt : INTEGER  COLON  non_label_stmt  {$$ = $3;}
         |  non_label_stmt { $$ = $1;}
 non_label_stmt  : assign_stmt { $$ = $1;}
@@ -248,7 +254,7 @@ sys_funct: SYS_FUNCT {$$ = S_Symbol($1);}
 sys_proc: SYS_PROC {$$ = S_Symbol($1);}
 sys_type: SYS_TYPE {$$ = S_Symbol($1);} 
 
-stat: error SEMI {/*jump to next semi after error */}
+error_stmt: error SEMI {/*jump to next semi after error */}
 
 %%
 int yyerror(char* msg) {

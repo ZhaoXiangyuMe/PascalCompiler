@@ -163,7 +163,7 @@ static void traverseVar(S_table env, int depth, A_var v) {
         case A_fieldVar:
             traverseVar(env, depth, v->u.field.var);
             break;
-        case A_arrayExp:
+        case A_subscriptVar:
             traverseVar(env, depth, v->u.subscript.var);
             traverseExp(env, depth, v->u.subscript.exp);
             break;
