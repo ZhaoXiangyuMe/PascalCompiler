@@ -530,7 +530,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         left=transExp(l,e,funenv,varenv,exp->u.op.left);
         right=transExp(l,e,funenv,varenv,exp->u.op.right);
         //¼Ó¼õ³Ë³ý
-        if(oper>=A_plusOp&&oper<=A_divideOp)
+        if(oper>=A_plusOp&&oper<= A_realDivideOp)
         {
             if(left.ty->flag!=INT&&left.ty->flag!=REAL)
                 EM_error(exp->u.op.left->pos,"Expected Integer or double left operand\n");
@@ -538,11 +538,19 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
                 EM_error(exp->u.op.right->pos,"Expected Integer or double right operand\n");
             
             //³ý·¨È«²¿±äÎªdoubleÀàÐÍ
-            if(left.ty->flag==INT&&right.ty->flag==INT&&oper!=A_divideOp)
+            if(left.ty->flag==INT&&right.ty->flag==INT&&oper!= A_realDivideOp)
                 return Newexpty(Tr_OpExp(oper, left.exp, right.exp),INT_type());
             else
                 return Newexpty(Tr_OpExp(oper, left.exp, right.exp),REAL_type());
         }
+		else if (oper == A_divideOp||oper == A_modOp) {
+			if (left.ty->flag != INT || right.ty->flag != INT)
+			{
+				EM_error(exp->u.op.right->pos, "Expected Integer or double right operand\n");
+			}
+			else
+				return Newexpty(Tr_OpExp(oper, left.exp, right.exp), INT_type());
+		}
         //µÈÓÚ²»µÈÓÚ£¬Ð¡ÓÚ£¬Ð¡ÓÚµÈÓÚ£¬´óÓÚ£¬´óÓÚµÈÓÚ
         else if(oper>=A_eqOp&&oper<=A_geOp)
         {
