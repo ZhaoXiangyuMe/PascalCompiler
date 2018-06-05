@@ -4,6 +4,7 @@
 #include "errormsg.h"
 #include "semant.h"
 #include "printtree.h"
+#include "drawtree.h"
 #include "canon.h"
 #include "escape.h"
 #include <stdio.h>
@@ -38,16 +39,29 @@ int main(int argc, char* argv[]) {
 
     fprintf(out, "\n---IR Tree---\n");
     F_fragList fragList = transProg(A_synTreeRoot);
+    T_stmList head = NULL, tail = NULL;
 
     for (;fragList;fragList = fragList->tail) {
-       /* T_stmList stmList = C_linearize(fragList->head->u.proc.body);
-        printStmList(stdout, stmList);
-
-        stmList = C_traceSchedule(C_basicBlocks(stmList));*/
-		T_stmList stmList = T_StmList(fragList->head->u.proc.body, NULL);
-		fprintf(stdout, "\n------\n");
-        printStmList(stdout, stmList); 
+        if (!head) {
+            tail = head = T_StmList(fragList->head->u.proc.body, NULL);
+        } else {
+            tail->tail = T_StmList(fragList->head->u.proc.body, NULL);
+            tail = tail->tail;
+        }
     }
+
+     /* T_stmList stmList = C_linearize(fragList->head->u.proc.body);
+    printStmList(stdout, stmList);
+
+    stmList = C_traceSchedule(C_basicBlocks(stmList));*/
+    fprintf(stdout, "\n------\n");
+    printStmList(stdout, head); 
+    FILE* fileout = fopen("IRTree.dot", "w");
+    if (!fileout) 
+        return 0;
+    fprintf(stdout, "\n------\n");
+    drawStmList(fileout, head);
+    fclose(fileout);
 	
 	while (1) {
 		int r = 1;

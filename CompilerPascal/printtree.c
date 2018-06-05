@@ -111,9 +111,6 @@ void printStmList (FILE *out, T_stmList stmList)
 {
   for (; stmList; stmList=stmList->tail) {
     pr_stm(out, stmList->head,0); fprintf(out, "\n");
+    fprintf(out, "\n------\n");
   }
 }
-
-//void pr_tr_exp(FILE *out, Tr_exp exp) {
-//	pr_tree_exp(out, unEx(exp), 0);
-//}

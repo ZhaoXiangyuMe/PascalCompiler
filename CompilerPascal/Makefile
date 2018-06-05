@@ -1,4 +1,4 @@
-objects = main.o canon.o printtree.o semant.o env.o types.o escape.o translate.o tree.o prabsyn.o temp.o frame.o symbol.o table.o absyn.o util.o errormsg.o y.tab.o lex.yy.o 
+objects = main.o canon.o drawtree.o printtree.o semant.o env.o types.o escape.o translate.o tree.o prabsyn.o temp.o frame.o symbol.o table.o absyn.o util.o errormsg.o y.tab.o lex.yy.o 
 pascalc: $(objects)
 	cc -o pascalc -g $(objects)
 
@@ -8,6 +8,9 @@ main.o:
 
 canon.o: canon.c canon.h
 	cc -g -c canon.c
+
+drawtree.o: drawtree.c drawtree.h
+	cc -g -c drawtree.c
 
 printtree.o: printtree.c printtree.h
 	cc -g -c printtree.c
@@ -67,3 +70,6 @@ prabsyn.o: prabsyn.c prabsyn.h
 
 clean: 
 	rm -f *.o
+
+graph:
+	dot -Tjpg IRTree.dot -o IRTree.jpg
