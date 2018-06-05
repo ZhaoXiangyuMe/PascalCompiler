@@ -1,5 +1,6 @@
 %{
 #include<stdio.h>
+#include<string.h>
 #include "util.h"
 #include "errormsg.h"
 #include "symbol.h"
@@ -139,6 +140,8 @@ sys_type        boolt|cht|intt|realt
 {sys_type}            {updatePos(); return SYS_TYPE;}
 \n                    {updatePos(); EM_newline();}
 \r\n                  {updatePos(); EM_newline();}
+\/\/[^\n]* 						{EM_newline();}
+\/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/		{for(int i = 1; i<strlen(yytext); i++){if(yytext[i]=='\n') EM_newline();}}
 [ \t+]                {updatePos();}
 .                     {updatePos(); char message[100]; sprintf(message, "illegal token:%s", yytext);EM_error(EM_tokPos, message);}      
 %%
