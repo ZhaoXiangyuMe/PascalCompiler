@@ -42,7 +42,7 @@ struct A_var_
          struct {A_var var;
            A_exp exp;} subscript;
        } u;
-      };
+};
 
 struct A_exp_
       {enum {A_varExp, A_nilExp, A_intExp, A_realExp, 
@@ -75,7 +75,7 @@ struct A_exp_
         struct {A_decList decs; A_exp body;} let;
         struct {S_symbol typ; A_exp size, init;} array;
       } u;
-     };
+};
 
 struct A_dec_ 
     {enum {A_functionDec, A_constDec, A_varDec, A_typeDec} kind;
@@ -91,7 +91,7 @@ struct A_dec_
 struct A_ty_ {enum {A_nameTy, A_recordTy, A_arrayTy, A_rangeTy, A_enumType} kind;
         A_pos pos;
         union {S_symbol name;
-         A_fieldList record;
+         A_fieldList record;  
          struct {A_ty range; A_ty element;} arrayy;
          struct {A_exp lo, hi;} rangee;
          A_fieldList enumm;

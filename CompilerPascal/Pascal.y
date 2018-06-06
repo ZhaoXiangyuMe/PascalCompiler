@@ -166,7 +166,7 @@ var_para_list : VAR  name_list {$$ = $2;}
 val_para_list : name_list {$$ = $1;}
 
 
-routine_body : compound_stmt {/*set routine body as A_exp*/ $$ = $1;}
+routine_body : compound_stmt {/*set routine body as A_exp*/ $$ = $1;}   
 compound_stmt : BEGIN_T  stmt_list  END { $$ = A_SeqExp(EM_tokPos, $2);}
 stmt_list : stmt  SEMI stmt_list { /*statement in routine body*/$$ = A_ExpList($1, $3);}
             | {$$ = NULL;}
