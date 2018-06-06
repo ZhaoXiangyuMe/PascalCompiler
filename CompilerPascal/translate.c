@@ -551,6 +551,10 @@ Tr_exp Tr_BreakExp(Tr_exp pos) {
 	return Tr_Nx(T_Jump(T_Name(name), Temp_LabelList(name, NULL)));
 }	
 
+Tr_exp Tr_RetExp(Tr_exp val) {
+	return Tr_NoExp();
+}
+
 Tr_expList Tr_ExpList(Tr_exp head, Tr_expList tail) {
 	Tr_expList list = checked_malloc(sizeof(*list));
 	list->head = head;

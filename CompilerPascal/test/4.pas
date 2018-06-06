@@ -5,5 +5,6 @@
         var a, b, c:real;
             x, y:integer;
         Begin 
-        	x := 1;           
+        // hello world 
+        	x := 1;   
         End.
