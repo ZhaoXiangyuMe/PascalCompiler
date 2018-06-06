@@ -735,7 +735,11 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 		        {
 		        		if(!dec->u.var.init)
 		        		{
-		        				S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));
+		        				
+								Environments temEnv = S_look(funenv, dec->u.var.var);
+								if(!temEnv)
+									S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));
+								else EM_error(dec->pos, "The var has been defined\n");
 		        		}
 //		            else if(type_match(tmptp,tmp.ty))
 //		                S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));               
@@ -785,9 +789,13 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
     		}
     		else
     		{
-    				initVar =  dec->u.constt.init;
-    				S_enter(funenv, dec->u.constt.constt, Newvarenv(acc, getExp.ty, 1));
-    				initVar = NULL;
+					Environments temEnv = S_look(funenv,dec->u.constt.constt);
+					if (!temEnv) {
+						initVar =  dec->u.constt.init;
+						S_enter(funenv, dec->u.constt.constt, Newvarenv(acc, getExp.ty, 1));
+						initVar = NULL;
+					}
+					else EM_error(dec->pos, "The var has been defined\n");	
     		}
     		return Tr_AssignExp(Tr_SimpleVar(acc, l), getExp.exp);
     }

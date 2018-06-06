@@ -142,6 +142,8 @@ sys_type        boolt|cht|intt|realt
 \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/		{updatePos(); for(int i = 1; i<strlen(yytext); i++){if(yytext[i]=='\n') EM_newline();}}
 \n                    {updatePos(); EM_newline();}
 \r\n                  {updatePos(); EM_newline();}
+\/\/[^\n]* 						{EM_newline();}
+\{.*\}		{for(int i = 1; i<strlen(yytext); i++){if(yytext[i]=='\n') EM_newline();}}
 [ \t+]                {updatePos();}
 .                     {updatePos(); char message[100]; sprintf(message, "illegal token:%s", yytext);EM_error(EM_tokPos, message);}      
 %%
