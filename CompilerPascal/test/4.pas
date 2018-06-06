@@ -7,5 +7,5 @@
             x, y:integer;
         Begin 
         	x := 1;  
-        	a := 1;        
+        	a := 1; {111}        
         End.
