@@ -3,7 +3,7 @@
               b = 2;
               c = 1.0;
         var      
-        		a, b, c: real;
+        	a, b, c: real;
             x, y:integer;
         Begin 
         // hello world 
