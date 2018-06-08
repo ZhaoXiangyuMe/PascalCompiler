@@ -85,6 +85,9 @@ void pr_exp(FILE *out, A_exp v, int d) {
 		case A_intExp:
 			fprintf(out, "intExp(%d)", v->u.intt);
 			break;
+		case A_charExp:
+			fprintf(out, "charExp(%c)", v->u.charr);
+			break;
 		case A_stringExp:
 			chstr(v->u.stringg);
 			fprintf(out, "stringExp(%s)", res);

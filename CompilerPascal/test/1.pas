@@ -1,8 +1,10 @@
 Program ex11;
-    var outer:integer; 
+    var c:char;
+        outer:integer; 
+        s:string;
         rec: record
-            Month: Byte;
-            Day: Byte;
+            Month: Integer;
+            Day: Integer;
             Year: Integer;
         end;
     Function max(x: integer;y:integer) : integer;
@@ -11,5 +13,7 @@ Program ex11;
            y := 1;
         End;  
     Begin
-       outer := 0;
+        c := 'a';
+        outer := 0;
+        s := "hello\nworld";
     End.
