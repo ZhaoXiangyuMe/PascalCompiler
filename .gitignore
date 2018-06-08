@@ -43,3 +43,7 @@
 */x64/
 Debug/
 *VC.opendb
+
+# graphdot
+*.dot
+*.jpg
