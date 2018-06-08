@@ -516,7 +516,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             list = Tr_ExpList(transDec(l,e,funenv,varenv,declist->head),list);*/
 		int count = 0;
 		for (declist = exp->u.let.decs; declist; declist = declist->tail) {
-			printf("%d", count++);
+			//printf("%d", count++);
 			transDec(l, e, funenv, varenv, declist->head);
 		
 		}
