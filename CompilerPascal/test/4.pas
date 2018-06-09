@@ -5,16 +5,9 @@
         var      
         	a, b, c: real;       
             x, y:integer;
+            z:char;
         Begin 
-        // hello world 
-        // 111
-        /*1  
-        1
-        
-        
-        1
-        11*/
-        //222
         	x := 1;
-        	a := 1; 111       
+        	a := 1;
+        	z := 'a';       
         End.
