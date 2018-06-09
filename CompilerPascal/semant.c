@@ -454,7 +454,7 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     {
         struct expty cond;
         cond=transExp(l,e,funenv,varenv,exp->u.whilee.test);
-        if(cond.ty->flag!=INT&&cond.ty->flag!=BOOLEAN)
+        if(cond.ty->flag!=BOOLEAN)
         {
             EM_error(exp->pos,"Integer expected in while\n");
         		return Newexpty(Tr_NoExp(),INT_type());
@@ -686,9 +686,9 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
     }
     else if(exp->kind == A_repeatExp)
     {
-    		struct expty num;
-    		num = transExp(l, e, funenv, varenv, exp->u.repeatt.test);
-    		if(num.ty->flag!=INT)
+    	struct expty num;
+    	num = transExp(l, e, funenv, varenv, exp->u.repeatt.test);
+    	if(num.ty->flag != BOOLEAN)
             EM_error(exp->pos,"Integer expected in repeat\n");
 //        Tr_exp done=doneExp();
         struct expty body = transExp(l, e, funenv, varenv, exp->u.repeatt.body);
@@ -863,20 +863,20 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
         Type namety;
         bool iscyl;
         for (nl = dec->u.type; nl; nl = nl->tail) 
-					S_enter(varenv, nl->head->name, NAME_type(nl->head->name, nl->head->ty));
-				iscyl = TRUE;
-				for (nl = dec->u.type; nl; nl = nl->tail) {//ËùÓÐµÄ¶¼ÏòÉÏ²éÕÒÒ»¸ö£¬×îºóÒ»¸ö»á²éÕÒµ½Êµ¼ÊÀàÐÍ
-					resTy = transType(l, e, funenv, varenv, nl->head->ty);
-					if (iscyl)
-						if (resTy->flag != NAME)
-							iscyl = FALSE;
-					namety = S_look(varenv, nl->head->name);
-					namety->u.name.ty = resTy;
-				}
-				if (iscyl) EM_error(dec->pos,"illegal type cycle: cycle must contain record, array");
-				return Tr_NoExp();
+				S_enter(varenv, nl->head->name, NAME_type(nl->head->name, nl->head->ty));
+		iscyl = TRUE;
+		for (nl = dec->u.type; nl; nl = nl->tail) {//ËùÓÐµÄ¶¼ÏòÉÏ²éÕÒÒ»¸ö£¬×îºóÒ»¸ö»á²éÕÒµ½Êµ¼ÊÀàÐÍ
+			resTy = transType(l, e, funenv, varenv, nl->head->ty);
+			if (iscyl)
+				if (resTy->flag != NAME)
+					iscyl = FALSE;
+			namety = S_look(varenv, nl->head->name);
+			namety->u.name.ty = resTy;
 		}
-		else
+		if (iscyl) EM_error(dec->pos,"illegal type cycle: cycle must contain record, array");
+		return Tr_NoExp();
+	}
+	else
 		{
 		    printf("TransDec inner error!\n");
 		    exit(4);
