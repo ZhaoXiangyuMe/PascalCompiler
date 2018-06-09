@@ -475,17 +475,22 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
 		else if(!type_match(left.ty,right.ty))
         {
         		if(left.exp == NULL){//ÓÃÓÚº¯Êý·µ»ØÖµÀàÐÍ¼ì²é
-   							EM_error(nowCheckFun->pos, "incorrect return type in function '%s'", S_name(nowCheckFun->name));
-   					}
-   					else if(left.isConst)
-   					{
-   							EM_error(exp->pos, "Don't assign to the const\n");
-   					}
-   					else
-            		EM_error(exp->pos,"Assign type mismatch\n");
+   						EM_error(nowCheckFun->pos, "incorrect return type in function '%s'", S_name(nowCheckFun->name));
+   				}
+   				else if(left.isConst)
+   				{
+   						EM_error(exp->pos, "Don't assign to the const\n");
+   				}
+   				else
+            			EM_error(exp->pos,"Assign type mismatch\n");
         		return Newexpty(Tr_NoExp(),INT_type());
         }
-        return Newexpty(Tr_AssignExp(left.exp, right.exp),VOID_type());
+		if (nowCheckFun)
+		{
+			return Newexpty(Tr_RetExp(right.exp), right.ty);
+		}
+		else
+			return Newexpty(Tr_AssignExp(left.exp, right.exp),VOID_type());
     }
 		//Óï·¨·ÖÎö½«for×ª»¯Îªwhile£¬´Ë´¦²»ÐèÒª´¦Àí
     else if(exp->kind==A_forExp)

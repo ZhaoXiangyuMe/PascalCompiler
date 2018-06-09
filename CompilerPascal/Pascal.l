@@ -150,6 +150,11 @@ sys_type        boolt|cht|intt|realt
 void updatePos(void) {
     EM_tokPos = charPos;
     charPos += yyleng;
+    for(int i = 0; i<strlen(yytext); i++)
+    {
+    		if(yytext[i]>='A'&&yytext[i]<='Z')
+    			yytext[i] = yytext[i]-'A'+'a';
+    }
 }
 int yywrap(){
     charPos = 1;
