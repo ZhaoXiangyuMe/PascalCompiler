@@ -29,7 +29,7 @@ int parse(string fname) {
 int main(int argc, char* argv[]) {
     FILE* out = stdout;
 	if (argc < 2)
-		parse("test/5.pas");
+		parse("test/3.pas");
 	else 
 	    parse(argv[1]);
     fprintf(out, "\n---Abstract Syntax Tree---\n");
