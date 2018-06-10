@@ -211,7 +211,7 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
                 if(tmpfl->head->name==var->u.field.sym)
                 {
                 		int size = getSize(tmpfl->head->ty);
-//有点小问题，等会再查
+
                     trans=Tr_FieldVar(pt1.exp,i,size);
                     return Newexpty(trans,gettype(tmpfl->head->ty));
                 }
@@ -251,7 +251,7 @@ static struct expty transVar(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             }
         }
     }
-    //else ERROR
+
     printf("Transvar inner error!\n");
     exit(1);
 }
@@ -262,9 +262,6 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
         return Newexpty(Tr_NoExp(), VOID_type());
     if(exp->kind==A_varExp)
         return transVar(l,e,funenv,varenv,exp->u.var);
-//有问题，最后在处理
-//    else if(exp->kind==A_nilExp)
-//        return Newexpty(nilExp(),NIL_type());
     else if(exp->kind==A_stringExp)
         return Newexpty(Tr_StringExp(255 ,exp->u.stringg),STRING_type());
     else if(exp->kind==A_intExp)
@@ -485,10 +482,10 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             			EM_error(exp->pos,"Assign type mismatch\n");
         		return Newexpty(Tr_NoExp(),INT_type());
         }
-		/*if (nowCheckFun)
+		if (nowCheckFun&&checkEqSymbol(nowCheckFun->name, exp->u.assign.var->u.simple))
 		{
 			return Newexpty(Tr_RetExp(right.exp), right.ty);
-		}*/
+		}
 		else
 			return Newexpty(Tr_AssignExp(left.exp, right.exp),VOID_type());
     }
@@ -739,12 +736,11 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
 		        if(tmptp)
 		        {
 		        		if(!dec->u.var.init)
-		        		{
-		        				
-								Environments temEnv = S_look(funenv, dec->u.var.var);
-								if(!temEnv)
+		        		{		        				
+								//Environments temEnv = S_look(funenv, dec->u.var.var);
+								//if(!temEnv)
 									S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));
-								else EM_error(dec->pos, "The var has been defined\n");
+								//else EM_error(dec->pos, "The var has been defined\n");
 		        		}
 //		            else if(type_match(tmptp,tmp.ty))
 //		                S_enter(funenv,dec->u.var.var,Newvarenv(acc,tmptp, 0));               
@@ -794,13 +790,13 @@ static Tr_exp transDec(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A_dec d
     		}
     		else
     		{
-					Environments temEnv = S_look(funenv,dec->u.constt.constt);
-					if (!temEnv) {
+					//Environments temEnv = S_look(funenv,dec->u.constt.constt);
+					//if (!temEnv) {
 						initVar =  dec->u.constt.init;
 						S_enter(funenv, dec->u.constt.constt, Newvarenv(acc, getExp.ty, 1));
 						initVar = NULL;
-					}
-					else EM_error(dec->pos, "The var has been defined\n");	
+					//}
+					//else EM_error(dec->pos, "The var has been defined\n");	
     		}
     		return Tr_AssignExp(Tr_SimpleVar(acc, l), getExp.exp);
     }
