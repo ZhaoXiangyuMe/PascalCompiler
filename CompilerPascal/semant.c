@@ -485,10 +485,10 @@ static struct expty transExp(Tr_level l,Tr_exp e,S_table funenv,S_table varenv,A
             			EM_error(exp->pos,"Assign type mismatch\n");
         		return Newexpty(Tr_NoExp(),INT_type());
         }
-		/*if (nowCheckFun)
+		if (nowCheckFun)
 		{
 			return Newexpty(Tr_RetExp(right.exp), right.ty);
-		}*/
+		}
 		else
 			return Newexpty(Tr_AssignExp(left.exp, right.exp),VOID_type());
     }
