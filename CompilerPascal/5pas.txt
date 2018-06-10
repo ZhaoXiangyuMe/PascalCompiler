@@ -1,0 +1,4 @@
+rec	VAR	RECORD
+s	VAR	STRING
+outer	VAR	INT
+c	VAR	CHAR

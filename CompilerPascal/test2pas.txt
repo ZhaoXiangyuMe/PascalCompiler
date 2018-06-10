@@ -1,0 +1,2 @@
+y	VAR	INT
+x	VAR	INT

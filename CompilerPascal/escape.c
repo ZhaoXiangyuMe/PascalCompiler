@@ -93,7 +93,7 @@ static void traverseExp(S_table env, int depth, A_exp e) {
                 traverseDec(env, depth, decs->head);
             }
             traverseExp(env, depth, e->u.let.body);
-            S_endScope(env);
+            S_endScope(env,3);
             break;
         case A_arrayExp:
             traverseExp(env, depth, e->u.array.size);
@@ -123,7 +123,7 @@ static void traverseDec(S_table env, int depth, A_dec d) {
                     S_enter(env, param->name, EscapeEntry(depth, &(param->escape)));
                 }
                 traverseExp(env, depth, func->body);
-                S_endScope(env);
+                S_endScope(env, 3);
                 depth--;
             }
             break;

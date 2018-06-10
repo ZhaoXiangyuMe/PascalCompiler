@@ -2,7 +2,7 @@
 #define ENV_H
 
 #include "translate.h"
-
+#include "types.h"
 typedef struct environments *Environments;
 
 struct environments

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "util.h"
 #include "table.h"
+#include "env.h"
 
 #define TABSIZE 127
 
@@ -59,8 +60,36 @@ void *TAB_look(TAB_table t, void *key)
    if (b->key==key) return b->value;
  return NULL;
 }
-
-void *TAB_pop(TAB_table t) {
+char * printType(Type ty) {
+	char *nameTy;
+	switch (ty->flag) {
+	case RECORD:	nameTy = "RECORD";	break;
+	case NIL:		nameTy = "NIL";		break;
+	case BOOLEAN:	nameTy = "BOOLEAN"; break;
+	case INT:		nameTy = "INT";		break;
+	case CHAR:		nameTy = "CHAR";	break;
+	case STRING:	nameTy = "STRING";	break;
+	case ARRAY:		nameTy = "ARRAY";	break;
+	case REAL:		nameTy = "REAL";	break;
+	case NAME:		nameTy = "NAME";	break;
+	case VOID:		nameTy = "VOID";	break;
+	case ENUM:		nameTy = "ENUM";	break;
+	}
+	return nameTy;
+}
+char * printVar(Environments en) {
+	char * nameEn;
+	switch (en->flag)
+	{
+	case VAR: nameEn = "VAR"; break;
+	case FUN: nameEn = "FUN"; break;
+	case CONST: nameEn = "CONST"; break;
+	default:
+		break;
+	}
+	return nameEn;
+}
+void *TAB_pop(TAB_table t, int type, int cont) {
   void *k; binder b; int index;
   assert (t);
   k = t->top;
@@ -70,6 +99,43 @@ void *TAB_pop(TAB_table t) {
   assert(b);
   t->table[index] = b->next;
   t->top=b->prevtop;
+  
+  if (type != 3&&b->value) {
+	  char tem[80];
+	  sprintf(tem, "%s%d%s", "symbol", cont, ".txt");
+	  FILE* fwrite = fopen(tem, "ab");
+
+	  fprintf(fwrite, "%s\t", S_name(b->key));
+	  //打印类型名
+	  char * nameTy;
+	  if (type == 0)
+	  {
+		  nameTy = printType((Type)(b->value));
+		  fprintf(fwrite, "%s\n", nameTy);
+	  }
+	  else {
+		  char * nameEn = printVar((Environments)b->value);
+		  fprintf(fwrite, "%s\t", nameEn);
+		  if (((Environments)b->value)->flag == FUN)
+		  {
+			  Typelist list = ((Environments)b->value)->u.fun.param;
+			  while (list)
+			  {
+				  nameTy = printType(list->head);
+				  fprintf(fwrite, "%s\t", nameTy);
+				  list = list->next;
+			  }
+			  nameTy = printType(((Environments)b->value)->u.fun.output);
+			  fprintf(fwrite, "%s\n", nameTy);
+		  }
+		  else
+		  {
+			  nameTy = printType(((Environments)b->value)->u.var.ty);
+			  fprintf(fwrite, "%s\n", nameTy);
+		  }
+	  }
+	  fclose(fwrite);
+  }
   return b->key;
 }
 
