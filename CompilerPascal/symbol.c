@@ -95,10 +95,15 @@ void S_beginScope(S_table t)
     S_enter(t,&marksym,NULL);
 }
 
-void S_endScope(S_table t)
+void S_endScope(S_table t, int type)
 {
   S_symbol s;
-  do s=TAB_pop(t);
+	static int count = 0;
+  if (type != 3) {	  
+//	  count++;
+  }
+  do
+	  s = TAB_pop(t, type, count);
   while (s != &marksym);
 }
 

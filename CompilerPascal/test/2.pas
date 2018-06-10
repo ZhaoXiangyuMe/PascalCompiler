@@ -1,4 +1,5 @@
 Program ex11;
+		type x=interger;
     var x, y:integer;
     Begin
     	x := 1;

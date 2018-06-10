@@ -40,5 +40,5 @@ void S_beginScope(S_table t);
 
 /* Remove any bindings entered since the current scope began,
    and end the current scope. */
-void S_endScope(S_table t);
+void S_endScope(S_table t, int type);
 #endif

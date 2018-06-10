@@ -1,0 +1,13 @@
+layer2	VAR	INT
+x	VAR	INT
+linktest	FUN	INT	INT
+layer1	VAR	INT
+y	VAR	INT
+x	VAR	INT
+y	VAR	INT
+x	VAR	INT
+max	FUN	INT	INT	INT
+link	FUN	INT	INT	VOID
+y	VAR	INT
+x	VAR	INT
+layer0	VAR	INT
