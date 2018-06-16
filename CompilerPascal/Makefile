@@ -1,10 +1,16 @@
-objects = main.o canon.o drawtree.o printtree.o semant.o env.o types.o escape.o translate.o tree.o prabsyn.o temp.o frame.o symbol.o table.o absyn.o util.o errormsg.o y.tab.o lex.yy.o 
+objects = main.o codegen.o assem.o canon.o drawtree.o printtree.o semant.o env.o types.o escape.o translate.o tree.o prabsyn.o temp.o frame.o symbol.o table.o absyn.o util.o errormsg.o y.tab.o lex.yy.o 
 pascalc: $(objects)
 	cc -o pascalc -g $(objects)
 
 
 main.o: 
 	cc -g -c main.c
+
+codegen.o: codegen.c codegen.h
+	cc -g -c codegen.c
+
+assem.o: assem.c assem.h
+	cc -g -c assem.c
 
 canon.o: canon.c canon.h
 	cc -g -c canon.c

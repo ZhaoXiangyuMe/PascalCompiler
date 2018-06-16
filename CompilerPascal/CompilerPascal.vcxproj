@@ -111,7 +111,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="absyn.h" />
+    <ClInclude Include="assem.h" />
     <ClInclude Include="canon.h" />
+    <ClInclude Include="codegen.h" />
     <ClInclude Include="drawtree.h" />
     <ClInclude Include="env.h" />
     <ClInclude Include="errormsg.h" />
@@ -131,7 +133,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="absyn.c" />
+    <ClCompile Include="assem.c" />
     <ClCompile Include="canon.c" />
+    <ClCompile Include="codegen.c" />
     <ClCompile Include="drawtree.c" />
     <ClCompile Include="env.c" />
     <ClCompile Include="errormsg.c" />

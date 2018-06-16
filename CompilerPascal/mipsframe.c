@@ -1,5 +1,6 @@
 #include "frame.h"
 #include "util.h"
+#include "temp.h"
 
 const int F_wordSize = 4;
 Temp_map F_tempMap = NULL;

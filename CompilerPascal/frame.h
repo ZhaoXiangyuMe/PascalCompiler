@@ -1,8 +1,10 @@
 #ifndef FRAME_H
 #define FRAME_H
+
 #include "util.h"
 #include "temp.h"
 #include "tree.h"
+#define F_TEMPMAP (F_tempMap ? F_tempMap : (F_tempMap = Temp_empty()))
 
 typedef struct F_access_ *F_access;
 typedef struct F_accessList_ *F_accessList;
